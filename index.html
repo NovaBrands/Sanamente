@@ -878,7 +878,7 @@ const FOTOS = {
   "aji molido extra": 'img/productos/aji-molido-extra.jpg',
   "ajo en polvo": 'img/productos/ajo-en-polvo.jpg',
   "ajo granulado": 'img/productos/ajo-granulado.jpg',
-  "alfajor cacao y mani": 'img/productos/alfajor-cacao-y-mani.jpg',
+  "alfajor cacao y mani": 'img/productos/alfajor-cacao-y-mani-2.jpg',
   "alfajor de nuez": 'img/productos/alfajor-de-nuez.jpg',
   "alhucema (lavanda)": 'img/productos/alhucema-lavanda.jpg',
   "almendras con chocolate con leche": 'img/productos/almendras-con-chocolate-con-leche.jpg',
@@ -1004,12 +1004,12 @@ const FOTOS = {
   "smams galletitas mousse de chocolate": 'img/productos/smams-galletitas-mousse-de-chocolate.jpg',
   "smams pepas con membrillo": 'img/productos/smams-pepas-con-membrillo.jpg',
   "sopa juliana diet": 'img/productos/sopa-juliana-diet.jpg',
-  "stevia liquida jual": 'img/productos/stevia-liquida-jual.jpg',
+  "stevia liquida jual": 'img/productos/stevia-liquida-jual-2.jpg',
   "texturizado de soja fino": 'img/productos/texturizado-de-soja-fino.jpg',
   "texturizado de soja grueso": 'img/productos/texturizado-de-soja-grueso.jpg',
   "tomates secos": 'img/productos/tomates-secos.jpg',
   "tomillo": 'img/productos/tomillo.jpg',
-  "wakas fusilli de alubia": 'img/productos/wakas-fusilli-de-alubia.jpg',
+  "wakas fusilli de alubia": 'img/productos/wakas-fusilli-de-alubia-quinoa.jpg',
   "wakas fusilli de amaranto": 'img/productos/wakas-fusilli-de-amaranto.jpg',
   "wakas fusilli de chia": 'img/productos/wakas-fusilli-de-chia.jpg',
   "wakas fusilli de kale": 'img/productos/wakas-fusilli-de-kale.jpg',
@@ -1057,6 +1057,39 @@ const FOTOS = {
   "hongo reishi en capsulas": 'img/productos/hongo-reishi-en-capsulas.jpg',
   "omega 3 en capsulas": 'img/productos/omega-3-en-capsulas.jpg',
   "melena de leon en capsulas": 'img/productos/melena-de-leon-en-capsulas.jpg',
+  "aceite de coco sir sir": 'img/productos/aceite-de-coco-sri-sri.jpg',
+  "aceite de coco cosaco": 'img/productos/aceite-de-coco-cosaco-360.jpg',
+  "aceite de coco cosaco 360 ml": 'img/productos/aceite-de-coco-cosaco-360.jpg',
+  "aceite de coco cosaco 200 ml": 'img/productos/aceite-de-coco-cosaco-200.jpg',
+  "aceite de oliva dell isola": 'img/productos/aceite-de-oliva-dell-isola.jpg',
+  "aceite de oliva pampagourmet": 'img/productos/aceite-de-oliva-pampagourmet.jpg',
+  "aceite de oregano bio nativa": 'img/productos/aceite-de-oregano-bio-nativa.jpg',
+  "vinagreta de manzana arytza": 'img/productos/vinagre-de-manzana-arytza.jpg',
+  "coriandro en grano": 'img/productos/coriandro-en-grano.jpg',
+  "bocaditos rellenos de dulce de leche.": 'img/productos/bocaditos-rellenos-de-dulce-de-leche.jpg',
+  "bocaditos rellenos de dulce de leche": 'img/productos/bocaditos-rellenos-de-dulce-de-leche.jpg',
+  "pins de chocolate semiamargo": 'img/productos/pins-de-chocolate-semiamargo.jpg',
+  "cacao amargo puro dicomere": 'img/productos/cacao-amargo-puro-dicomere.jpg',
+  "cacao en polvo alcalino el cosaco": 'img/productos/cacao-en-polvo-alcalino-el-cosaco.jpg',
+  "chocolate 80% dr cacao sin azucar": 'img/productos/chocolate-80-dr-cacao.jpg',
+  "fideos soyarroz clasicos": 'img/productos/fideos-soyarroz-clasicos.jpg',
+  "fideos soyarroz espinaca": 'img/productos/fideos-soyarroz-espinaca.jpg',
+  "wakas penne de kale": 'img/productos/wakas-penne-de-kale.jpg',
+  "wakas penne de maiz": 'img/productos/wakas-penne-de-maiz.jpg',
+  "wakas penne de quinoa": 'img/productos/wakas-penne-de-quinoa.jpg',
+  "barritas (cruddas) arandanos y nuez.": 'img/productos/barritas-crudda-arandanos-y-nuez.jpg',
+  "barritas (cruddas) penaut caramel": 'img/productos/barritas-crudda-peanut-caramel.jpg',
+  "alfajor de mani con dulce de leche": 'img/productos/alfajor-de-mani-con-dulce-de-leche.jpg',
+  "alfajor algarroba y zapallo": 'img/productos/alfajor-algarroba-y-zapallo.jpg',
+  "arrope de chanar": 'img/productos/arrope-de-chanar.jpg',
+  "pindare": 'img/productos/yerba-pindare.jpg',
+  "yerba organica fuerte": 'img/productos/yerba-organica-fuerte.jpg',
+  "yerba amate con palo": 'img/productos/yerba-amate-con-palo.jpg',
+  "caramelos de miel y jengibre": 'img/productos/caramelos-de-miel-y-jengibre.jpg',
+  "mix sin mani": 'img/productos/mix-sin-mani.jpg',
+  "girasol black": 'img/productos/girasol-black.jpg',
+  "barrita crudda peanut caramel": 'img/productos/barritas-crudda-peanut-caramel.jpg',
+  "barrita crudda arandanos y nuez": 'img/productos/barritas-crudda-arandanos-y-nuez.jpg',
 /*FOTOS-FIN*/
 };
 
@@ -1257,7 +1290,7 @@ const FOTOS = {
     const cat = CATEGORIAS.find(c => c.id === p.cat);
     const el = document.createElement('article');
     el.className = 'prod';
-    const foto = p.foto || FOTOS[normalizar(p.nombre)];
+    const foto = p.foto || FOTOS[normalizar(p.nombre.trim() + ' ' + (p.desc || ''))] || FOTOS[normalizar(p.nombre.trim() + ' ' + p.unidad)] || FOTOS[normalizar(p.nombre.trim())] || FOTOS[normalizar(p.nombre)];
     el.innerHTML =
       '<div class="prod-foto' + (foto ? '' : ' sin-foto') + '">' +
         (foto ? '<img src="' + foto + '" alt="" loading="lazy" decoding="async">'
