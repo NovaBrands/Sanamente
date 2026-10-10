@@ -48,6 +48,8 @@ a { color: inherit; }
 .topbar a { text-decoration: none; }
 .topbar a:hover { text-decoration: underline; }
 .topbar-datos { display: flex; gap: 22px; }
+.topbar-links { display: flex; gap: 18px; flex: none; }
+.topbar-arr { font-weight: 600; }
 
 /* ── NAV ── */
 nav {
@@ -295,6 +297,9 @@ footer { background: var(--tinta); color: #C9CFC8; }
 .foot p { font-size: 14px; line-height: 1.7; }
 .foot a { color: #C9CFC8; text-decoration: none; }
 .foot a:hover { color: #fff; text-decoration: underline; }
+.foot-legal { display: flex; flex-wrap: wrap; gap: 6px 18px; padding-top: 16px; padding-bottom: 16px; border-top: 1px solid rgba(255,255,255,.1); font-size: 13px; }
+.foot-legal a { color: #C9CFC8; text-decoration: none; }
+.foot-legal a:hover { color: #fff; text-decoration: underline; }
 .foot-base { border-top: 1px solid rgba(255,255,255,.1); padding-top: 18px; padding-bottom: 22px; font-size: 13px; color: #8E978F; }
 
 .wa-flota {
@@ -316,6 +321,7 @@ footer { background: var(--tinta); color: #C9CFC8; }
 @media (max-width: 700px) {
   .wrap, .nav-in { padding-left: 18px; padding-right: 18px; }
   .topbar-datos span + span, .topbar-wa { display: none; }
+  .topbar .wrap { flex-wrap: wrap; gap: 4px 16px; }
   .nav-links { display: none; }
   .btn-carrito { margin-left: auto; }
   .hero h1 { font-size: 2.15rem; }
@@ -356,7 +362,10 @@ footer { background: var(--tinta); color: #C9CFC8; }
 <div class="topbar">
   <div class="wrap">
     <div class="topbar-datos"><span data-dato="direccion"></span><span data-dato="horarios"></span></div>
-    <a class="topbar-wa" data-wa href="#" target="_blank" rel="noopener">Pedidos por WhatsApp</a>
+    <div class="topbar-links">
+      <a class="topbar-wa" data-wa href="#" target="_blank" rel="noopener">Pedidos por WhatsApp</a>
+      <a class="topbar-arr" href="legales/arrepentimiento.html">Botón de arrepentimiento</a>
+    </div>
   </div>
 </div>
 
@@ -495,7 +504,15 @@ footer { background: var(--tinta); color: #C9CFC8; }
       <p><a data-wa href="#" target="_blank" rel="noopener">WhatsApp</a><br><a data-mapa href="#" target="_blank" rel="noopener">Ver en el mapa</a></p>
     </div>
   </div>
-  <div class="wrap foot-base">© <span id="anio"></span> Sanamente · Dietética natural</div>
+  <div class="wrap foot-legal" role="navigation" aria-label="Información legal">
+    <a href="legales/terminos.html">Términos y condiciones</a>
+    <a href="legales/privacidad.html">Privacidad</a>
+    <a href="legales/cookies.html">Cookies</a>
+    <a href="legales/devoluciones.html">Cambios y devoluciones</a>
+    <a href="legales/arrepentimiento.html"><b>Botón de arrepentimiento</b></a>
+    <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener">Defensa de las y los Consumidores</a>
+  </div>
+  <div class="wrap foot-base">© <span id="anio"></span> Sanamente · Dietética natural · Nestor Lell · CUIT 20-25391617-7</div>
 </footer>
 
 <a class="wa-flota" id="waFlota" href="#" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
