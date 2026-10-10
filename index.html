@@ -168,6 +168,43 @@ section { scroll-margin-top: 76px; }
 .btn-add.ok { background: var(--verde); color: #fff; }
 .sin-result { color: var(--gris); padding: 30px 0; }
 
+/* ── NUEVOS INGRESOS (carrusel) ── */
+.nuevos-cab { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.carru-flechas { display: flex; gap: 8px; flex: none; }
+.carru-btn {
+  width: 42px; height: 42px; border-radius: 8px; background: var(--card);
+  border: 1px solid var(--borde-2); color: var(--tinta);
+  display: grid; place-items: center; transition: border-color .15s, opacity .15s;
+}
+.carru-btn:hover:not(:disabled) { border-color: var(--tinta); }
+.carru-btn:disabled { opacity: .35; cursor: default; }
+.carru {
+  display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 36px) / 4); gap: 12px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.carru::-webkit-scrollbar { display: none; }
+.carru > .prod { scroll-snap-align: start; }
+.prod-foto {
+  position: relative; aspect-ratio: 1 / 1; margin: -18px -18px 14px;
+  border-radius: var(--radio) var(--radio) 0 0; border-bottom: 1px solid var(--fondo-2);
+  background: #fff; overflow: hidden; display: grid; place-items: center; font-size: 52px; line-height: 1;
+}
+.prod-foto img { width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: transform .3s; }
+.prod:hover .prod-foto img { transform: scale(1.04); }
+.prod-foto.sin-foto { background: var(--fondo); }
+.prod-nuevo {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--verde); color: #fff; font-size: 11px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; padding: 3px 8px; border-radius: 5px;
+}
+.carru-puntos { display: flex; justify-content: center; gap: 6px; margin-top: 18px; }
+.carru-puntos button {
+  width: 8px; height: 8px; border-radius: 4px; background: var(--borde-2); padding: 0;
+  transition: width .2s, background .2s;
+}
+.carru-puntos button[aria-current="true"] { width: 22px; background: var(--verde); }
+
 /* ── EL LOCAL ── */
 .local { background: var(--fondo-2); border-top: 1px solid var(--borde); }
 .local-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; padding-top: 72px; padding-bottom: 72px; }
@@ -274,6 +311,7 @@ footer { background: var(--tinta); color: #C9CFC8; }
   .local-grid { grid-template-columns: 1fr; gap: 28px; padding-top: 56px; padding-bottom: 56px; }
   .foot { grid-template-columns: 1fr 1fr; }
   .foot > div:first-child { grid-column: 1 / -1; }
+  .carru { grid-auto-columns: calc((100% - 24px) / 3); }
 }
 @media (max-width: 700px) {
   .wrap, .nav-in { padding-left: 18px; padding-right: 18px; }
@@ -294,11 +332,15 @@ footer { background: var(--tinta); color: #C9CFC8; }
   .prod-desc { font-size: 12.5px; }
   .prod-pie { flex-direction: column; align-items: stretch; gap: 10px; }
   .btn-add { text-align: center; }
+  .carru { grid-auto-columns: 62%; gap: 10px; }
+  .carru-flechas { display: none; }
+  .prod-foto { margin: -14px -12px 12px; font-size: 40px; }
+  .prod-foto img { padding: 6px; }
   .foot { grid-template-columns: 1fr; gap: 24px; padding-top: 40px; }
   .wa-flota { bottom: 14px; right: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html, .carru { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; }
 }
 </style>
@@ -329,6 +371,7 @@ footer { background: var(--tinta); color: #C9CFC8; }
       <span class="logo-txt">Sana<em>mente</em></span>
     </a>
     <div class="nav-links">
+      <a href="#nuevos" id="linkNuevos" hidden>Nuevos</a>
       <a href="#catalogo">Catálogo</a>
       <a href="#local">El local</a>
       <a href="#contacto">Contacto</a>
@@ -365,6 +408,26 @@ footer { background: var(--tinta); color: #C9CFC8; }
     </figure>
   </div>
 </header>
+
+<!-- Se muestra solo si hay productos marcados como nuevos (ver NUEVOS más abajo, o la columna "Nuevo" de la planilla). -->
+<section class="sec wrap" id="nuevos" hidden aria-roledescription="carrusel" aria-labelledby="tituloNuevos">
+  <div class="sec-cab nuevos-cab">
+    <div>
+      <h2 id="tituloNuevos">Nuevos ingresos</h2>
+      <p>Lo último que llegó al local. Pedilo antes de que se termine.</p>
+    </div>
+    <div class="carru-flechas">
+      <button type="button" class="carru-btn" id="carruAnt" aria-label="Ver los anteriores">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" class="carru-btn" id="carruSig" aria-label="Ver los siguientes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="carru" id="carru"></div>
+  <div class="carru-puntos" id="carruPuntos"></div>
+</section>
 
 <section class="sec wrap" id="catalogo">
   <div class="sec-cab">
@@ -535,7 +598,9 @@ const CATEGORIAS = [
   { id: 'pastas', nombre: 'Pastas', emoji: '🍝' },
   { id: 'bebidas', nombre: 'Bebidas', emoji: '🥤' },
   { id: 'barras', nombre: 'Barras', emoji: '🍬' },
-  { id: 'despensa', nombre: 'Despensa', emoji: '🫙' }
+  { id: 'despensa', nombre: 'Despensa', emoji: '🫙' },
+  { id: 'caramelos', nombre: 'Caramelos', emoji: '🍬' },
+  { id: 'suplementos', nombre: 'Suplementos', emoji: '💊' }
 ];
 
 let PRODUCTOS = [
@@ -789,6 +854,213 @@ let PRODUCTOS = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
+   NUEVOS INGRESOS — los productos que aparecen en el carrusel de arriba.
+   Escribí el nombre tal cual figura en el catálogo (mayúsculas y tildes no importan).
+   Si en la planilla agregás una columna "Nuevo" y ponés "Sí", también aparecen.
+   Si no hay ninguno, el carrusel no se muestra.
+   ═══════════════════════════════════════════════════════════════ */
+const NUEVOS = [
+  // Vacío: los nuevos se marcan desde la planilla, con la columna "Nuevo".
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   FOTOS — qué foto de la carpeta img/productos lleva cada producto.
+   La clave es el nombre del producto en minúsculas y sin tildes.
+   Si en la planilla hay una columna "Foto" con un link o una ruta, esa manda.
+   ═══════════════════════════════════════════════════════════════ */
+const FOTOS = {
+/*FOTOS-INICIO*/
+  "aceite de coco entrenuts": 'img/productos/aceite-de-coco-entrenuts.jpg',
+  "aceite de oliva areco": 'img/productos/aceite-de-oliva-areco.jpg',
+  "aceite de oliva virgen extra areco": 'img/productos/aceite-de-oliva-virgen-extra-areco.jpg',
+  "aceite de sesamo tostado nutrasem": 'img/productos/aceite-de-sesamo-tostado-nutrasem.jpg',
+  "adobo para pizza": 'img/productos/adobo-para-pizza.jpg',
+  "aji molido extra": 'img/productos/aji-molido-extra.jpg',
+  "ajo en polvo": 'img/productos/ajo-en-polvo.jpg',
+  "ajo granulado": 'img/productos/ajo-granulado.jpg',
+  "alfajor cacao y mani": 'img/productos/alfajor-cacao-y-mani.jpg',
+  "alfajor de nuez": 'img/productos/alfajor-de-nuez.jpg',
+  "alhucema (lavanda)": 'img/productos/alhucema-lavanda.jpg',
+  "almendras con chocolate con leche": 'img/productos/almendras-con-chocolate-con-leche.jpg',
+  "almendras non pareil": 'img/productos/almendras-non-pareil.jpg',
+  "almidon de maiz": 'img/productos/almidon-de-maiz.jpg',
+  "amargon (diente de leon)": 'img/productos/amargon-diente-de-leon.jpg',
+  "anis en semilla": 'img/productos/anis-en-semilla.jpg',
+  "arandanos pasas": 'img/productos/arandanos-pasas.jpg',
+  "artemisa": 'img/productos/artemisa.jpg',
+  "avellanas": 'img/productos/avellanas.jpg',
+  "avena extra fina": 'img/productos/avena-extra-fina.jpg',
+  "avena instantanea": 'img/productos/avena-instantanea.jpg',
+  "avena tradicional": 'img/productos/avena-tradicional.jpg',
+  "azucar impalpable": 'img/productos/azucar-impalpable.jpg',
+  "baharat 7 especias": 'img/productos/baharat-7-especias.jpg',
+  "barra de coco y cacao": 'img/productos/barra-de-coco-y-cacao.jpg',
+  "bicarbonato de sodio": 'img/productos/bicarbonato-de-sodio.jpg',
+  "boldo": 'img/productos/boldo.jpg',
+  "bolitas de chocolate": 'img/productos/bolitas-de-chocolate.jpg',
+  "cacao amargo": 'img/productos/cacao-amargo.jpg',
+  "cacao amargo alpino": 'img/productos/cacao-amargo-alpino.jpg',
+  "canarias": 'img/productos/canarias.jpg',
+  "canela en rama": 'img/productos/canela-en-rama.jpg',
+  "canela molida": 'img/productos/canela-molida.jpg',
+  "cardo mariano": 'img/productos/cardo-mariano.jpg',
+  "cascarilla de cacao": 'img/productos/cascarilla-de-cacao.jpg',
+  "castana de caju entera": 'img/productos/castana-de-caju-entera.jpg',
+  "castana de caju partida": 'img/productos/castana-de-caju-partida.jpg',
+  "cedron": 'img/productos/cedron.jpg',
+  "chia premium": 'img/productos/chia-premium.jpg',
+  "chips de banana": 'img/productos/chips-de-banana.jpg',
+  "chips de chocolate blanco": 'img/productos/chips-de-chocolate-blanco.jpg',
+  "chips de chocolate semiamargo": 'img/productos/chips-de-chocolate-semiamargo.jpg',
+  "ciruela sin carozo": 'img/productos/ciruela-sin-carozo.jpg',
+  "clavo de olor en grano": 'img/productos/clavo-de-olor-en-grano.jpg',
+  "coco en escamas": 'img/productos/coco-en-escamas.jpg',
+  "coco rallado low fat": 'img/productos/coco-rallado-low-fat.jpg',
+  "cola de caballo": 'img/productos/cola-de-caballo.jpg',
+  "copos con azucar": 'img/productos/copos-con-azucar.jpg',
+  "copos sin azucar": 'img/productos/copos-sin-azucar.jpg',
+  "curcuma": 'img/productos/curcuma.jpg',
+  "curry en polvo": 'img/productos/curry-en-polvo.jpg',
+  "datiles de egipto": 'img/productos/datiles-de-egipto.jpg',
+  "entrenuts barra proteica naranja y choco": 'img/productos/entrenuts-barra-proteica-naranja-y-choco.jpg',
+  "esencia de vainilla": 'img/productos/esencia-de-vainilla.jpg',
+  "esencia de vainilla proin": 'img/productos/esencia-de-vainilla-proin.jpg',
+  "farina de mandioca": 'img/productos/farina-de-mandioca.jpg',
+  "fecula de mandioca": 'img/productos/fecula-de-mandioca.jpg',
+  "gelatina sin sabor": 'img/productos/gelatina-sin-sabor.jpg',
+  "gentech iron bar chocolate": 'img/productos/gentech-iron-bar-chocolate.jpg',
+  "gentech iron bar frutilla": 'img/productos/gentech-iron-bar-frutilla.jpg',
+  "gentech low carb brownie": 'img/productos/gentech-low-carb-brownie.jpg',
+  "girasol pelado extra": 'img/productos/girasol-pelado-extra.jpg',
+  "granix almohaditas de avellana": 'img/productos/granix-almohaditas-de-avellana.jpg',
+  "granix almohaditasde avena": 'img/productos/granix-almohaditasde-avena.jpg',
+  "granix almohaditasde frutilla": 'img/productos/granix-almohaditasde-frutilla.jpg',
+  "granix aritos con miel": 'img/productos/granix-aritos-con-miel.jpg',
+  "granix aritos frutales": 'img/productos/granix-aritos-frutales.jpg',
+  "harina de almendras": 'img/productos/harina-de-almendras.jpg',
+  "harina de arroz blanca": 'img/productos/harina-de-arroz-blanca.jpg',
+  "harina de avena": 'img/productos/harina-de-avena.jpg',
+  "harina de coco": 'img/productos/harina-de-coco.jpg',
+  "harina de maiz blanco": 'img/productos/harina-de-maiz-blanco.jpg',
+  "harina integral": 'img/productos/harina-integral.jpg',
+  "harina paraguaya": 'img/productos/harina-paraguaya.jpg',
+  "hibiscus (flor de jamaica)": 'img/productos/hibiscus-flor-de-jamaica.jpg',
+  "higos turcos (esmirna)": 'img/productos/higos-turcos-esmirna.jpg',
+  "hongos de pino": 'img/productos/hongos-de-pino.jpg',
+  "jengibre molido": 'img/productos/jengibre-molido.jpg',
+  "leche de coco en polvo": 'img/productos/leche-de-coco-en-polvo.jpg',
+  "lenteja turca": 'img/productos/lenteja-turca.jpg',
+  "lentejas nacionales": 'img/productos/lentejas-nacionales.jpg',
+  "levadura de cerveza": 'img/productos/levadura-de-cerveza.jpg',
+  "lino en semillas": 'img/productos/lino-en-semillas.jpg',
+  "lulemuu alfajor de limon": 'img/productos/lulemuu-alfajor-de-limon.jpg',
+  "lulemuu barra de arroz con frutilla": 'img/productos/lulemuu-barra-de-arroz-con-frutilla.jpg',
+  "lulemuu oblea rellena de limon": 'img/productos/lulemuu-oblea-rellena-de-limon.jpg',
+  "maiz pisado blanco": 'img/productos/maiz-pisado-blanco.jpg',
+  "maiz pisingallo": 'img/productos/maiz-pisingallo.jpg',
+  "mani con chocolate semiamargo": 'img/productos/mani-con-chocolate-semiamargo.jpg',
+  "mani garrapinada": 'img/productos/mani-garrapinada.jpg',
+  "mani repelado salado": 'img/productos/mani-repelado-salado.jpg',
+  "mani repelado tostado sin sal": 'img/productos/mani-repelado-tostado-sin-sal.jpg',
+  "manzanilla egipcia": 'img/productos/manzanilla-egipcia.jpg',
+  "menta en hoja": 'img/productos/menta-en-hoja.jpg',
+  "mezcla de semillas": 'img/productos/mezcla-de-semillas.jpg',
+  "miel de carpincho": 'img/productos/miel-de-carpincho.jpg',
+  "mix europeo": 'img/productos/mix-europeo.jpg',
+  "moringa": 'img/productos/moringa.jpg',
+  "nuez de brasil pelada (para)": 'img/productos/nuez-de-brasil-pelada-para.jpg',
+  "nuez mariposa extra light": 'img/productos/nuez-mariposa-extra-light.jpg',
+  "nuez pecan partida": 'img/productos/nuez-pecan-partida.jpg',
+  "oregano": 'img/productos/oregano.jpg',
+  "ortiga": 'img/productos/ortiga.jpg',
+  "paico": 'img/productos/paico.jpg',
+  "panko blanco gochiso": 'img/productos/panko-blanco-gochiso.jpg',
+  "paprika": 'img/productos/paprika.jpg',
+  "pasas con chocolate con leche": 'img/productos/pasas-con-chocolate-con-leche.jpg',
+  "pasas jumbo superior": 'img/productos/pasas-jumbo-superior.jpg',
+  "pasas morochas jumbo": 'img/productos/pasas-morochas-jumbo.jpg',
+  "pasas sultaninas rubias": 'img/productos/pasas-sultaninas-rubias.jpg',
+  "pasta de mani natural entrenuts": 'img/productos/pasta-de-mani-natural-entrenuts.jpg',
+  "pepas de membrillo smams": 'img/productos/pepas-de-membrillo-smams.jpg',
+  "pimenton ahumado": 'img/productos/pimenton-ahumado.jpg',
+  "pimenton espanol puro": 'img/productos/pimenton-espanol-puro.jpg',
+  "pimenton extra": 'img/productos/pimenton-extra.jpg',
+  "pimienta blanca molida": 'img/productos/pimienta-blanca-molida.jpg',
+  "pimienta negra molida": 'img/productos/pimienta-negra-molida.jpg',
+  "pistacho pelado natural": 'img/productos/pistacho-pelado-natural.jpg',
+  "poleo": 'img/productos/poleo.jpg',
+  "polvo de hornear": 'img/productos/polvo-de-hornear.jpg',
+  "porotos lupines": 'img/productos/porotos-lupines.jpg',
+  "porotos pallares": 'img/productos/porotos-pallares.jpg',
+  "provenzal": 'img/productos/provenzal.jpg',
+  "psyllium (zaragatona)": 'img/productos/psyllium-zaragatona.jpg',
+  "romero": 'img/productos/romero.jpg',
+  "rompepiedras": 'img/productos/rompepiedras.jpg',
+  "sal del himalaya": 'img/productos/sal-del-himalaya.jpg',
+  "semillas de zapallo crudas": 'img/productos/semillas-de-zapallo-crudas.jpg',
+  "semola candeal": 'img/productos/semola-candeal.jpg',
+  "sen hojas": 'img/productos/sen-hojas.jpg',
+  "smams budin de vainilla": 'img/productos/smams-budin-de-vainilla.jpg',
+  "smams galletitas mousse de chocolate": 'img/productos/smams-galletitas-mousse-de-chocolate.jpg',
+  "smams pepas con membrillo": 'img/productos/smams-pepas-con-membrillo.jpg',
+  "sopa juliana diet": 'img/productos/sopa-juliana-diet.jpg',
+  "stevia liquida jual": 'img/productos/stevia-liquida-jual.jpg',
+  "texturizado de soja fino": 'img/productos/texturizado-de-soja-fino.jpg',
+  "texturizado de soja grueso": 'img/productos/texturizado-de-soja-grueso.jpg',
+  "tomates secos": 'img/productos/tomates-secos.jpg',
+  "tomillo": 'img/productos/tomillo.jpg',
+  "wakas fusilli de alubia": 'img/productos/wakas-fusilli-de-alubia.jpg',
+  "wakas fusilli de amaranto": 'img/productos/wakas-fusilli-de-amaranto.jpg',
+  "wakas fusilli de chia": 'img/productos/wakas-fusilli-de-chia.jpg',
+  "wakas fusilli de kale": 'img/productos/wakas-fusilli-de-kale.jpg',
+  "wakas fusilli de maiz": 'img/productos/wakas-fusilli-de-maiz.jpg',
+  "wakas fusilli de quinoa": 'img/productos/wakas-fusilli-de-quinoa.jpg',
+  "yerba 9 yuyos burrito": 'img/productos/yerba-9-yuyos-burrito.jpg',
+  "yerba 9 yuyos tradicional": 'img/productos/yerba-9-yuyos-tradicional.jpg',
+  "yerba dulce con stevia": 'img/productos/yerba-dulce-con-stevia.jpg',
+  "slavado de trigo fino": 'img/productos/slavado-de-trigo-fino.jpg',
+  "salvado de trigo fino": 'img/productos/slavado-de-trigo-fino.jpg',
+  "jugo natural limon menta jengibre": 'img/productos/jugo-natural-limon-menta-jengibre.jpg',
+  "jugo natural pomelo": 'img/productos/jugo-natural-pomelo.jpg',
+  "jugo natural paranja": 'img/productos/jugo-natural-naranja.jpg',
+  "jugo natural naranja": 'img/productos/jugo-natural-naranja.jpg',
+  "jugo natural naranja maracuya": 'img/productos/jugo-natural-naranja-maracuya.jpg',
+  "jugo natural naranja frutilla": 'img/productos/jugo-natural-naranja-frutilla.jpg',
+  "jugo natural naranja durazno": 'img/productos/jugo-natural-naranja-durazno.jpg',
+  "jugo natural naranja anana": 'img/productos/jugo-natural-naranja-anana.jpg',
+  "yerba organica tradicional": 'img/productos/yerba-organica-tradicional.jpg',
+  "yerba organica suave": 'img/productos/yerba-organica-suave.jpg',
+  "arrope de tuna": 'img/productos/arrope-de-tuna.jpg',
+  "semillas de amapola": 'img/productos/semillas-de-amapola.jpg',
+  "eneldo": 'img/productos/eneldo.jpg',
+  "perejil en hojas": 'img/productos/perejil-en-hojas.jpg',
+  "sesamo blanco": 'img/productos/sesamo-blanco.jpg',
+  "caramelos de eucaliptus": 'img/productos/caramelos-de-eucaliptus.jpg',
+  "caramelos de miel y menta": 'img/productos/caramelos-de-miel-y-menta.jpg',
+  "ena protein bar frutilla a la crema": 'img/productos/ena-protein-bar-frutilla-a-la-crema.jpg',
+  "pimienta negra en grano": 'img/productos/pimienta-negra-en-grano.jpg',
+  "mani con vaina": 'img/productos/mani-con-vaina.jpg',
+  "mani runner crudo": 'img/productos/mani-runner-crudo.jpg',
+  "azucar organica": 'img/productos/azucar-organica.jpg',
+  "azucar integral de cana": 'img/productos/azucar-integral-de-cana.jpg',
+  "calendula": 'img/productos/calendula.jpg',
+  "chimichurri": 'img/productos/chimichurri.jpg',
+  "jazmin flor": 'img/productos/jazmin-flor.jpg',
+  "siempre viva": 'img/productos/siempre-viva.jpg',
+  "te de burro": 'img/productos/te-de-burro.jpg',
+  "ambay": 'img/productos/ambay.jpg',
+  "yerba 9 yuyos guarana": 'img/productos/yerba-9-yuyos-guarana.jpg',
+  "yerba 9 yuyos jengibre": 'img/productos/yerba-9-yuyos-jengibre.jpg',
+  "yerba 9 yuyos limon": 'img/productos/yerba-9-yuyos-limon.jpg',
+  "yerba 9 yuyos naranja": 'img/productos/yerba-9-yuyos-naranja.jpg',
+  "ashwagandha sundance": 'img/productos/ashwagandha-sundance.jpg',
+  "hongo reishi en capsulas": 'img/productos/hongo-reishi-en-capsulas.jpg',
+  "omega 3 en capsulas": 'img/productos/omega-3-en-capsulas.jpg',
+  "melena de leon en capsulas": 'img/productos/melena-de-leon-en-capsulas.jpg',
+/*FOTOS-FIN*/
+};
+
+/* ═══════════════════════════════════════════════════════════════
    De acá para abajo no hace falta tocar nada.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
@@ -981,33 +1253,115 @@ let PRODUCTOS = [
   }
 
   /* ── Catálogo ── */
+  function tarjeta(p, mostrarCategoria, esNuevo) {
+    const cat = CATEGORIAS.find(c => c.id === p.cat);
+    const el = document.createElement('article');
+    el.className = 'prod';
+    const foto = p.foto || FOTOS[normalizar(p.nombre)];
+    el.innerHTML =
+      '<div class="prod-foto' + (foto ? '' : ' sin-foto') + '">' +
+        (foto ? '<img src="' + foto + '" alt="" loading="lazy" decoding="async">'
+              : '<span aria-hidden="true">' + (p.emoji || '') + '</span>') +
+        (esNuevo ? '<span class="prod-nuevo">Nuevo</span>' : '') +
+      '</div>' +
+      (mostrarCategoria && cat ? '<div class="prod-cat">' + cat.nombre + '</div>' : '') +
+      '<h3>' + p.nombre + '</h3>' +
+      '<p class="prod-desc">' + (p.desc || '') + '</p>' +
+      '<div class="prod-pie">' +
+        '<div class="prod-precio">' + plata(p.precio) + precioUnidad(p) + '</div>' +
+      '</div>';
+    // Si la foto no está en la carpeta, vuelve al emoji.
+    const img = el.querySelector('.prod-foto img');
+    if (img) img.addEventListener('error', () => {
+      img.parentElement.classList.add('sin-foto');
+      img.replaceWith(Object.assign(document.createElement('span'), { textContent: p.emoji || '' }));
+    });
+    const btn = document.createElement('button');
+    btn.className = 'btn-add'; btn.type = 'button';
+    btn.textContent = 'Agregar';
+    btn.setAttribute('aria-label', 'Agregar ' + p.nombre + ' al pedido');
+    btn.addEventListener('click', () => {
+      sumar(p.id, 1);
+      btn.textContent = '✓ Agregado'; btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'Agregar'; btn.classList.remove('ok'); }, 1100);
+    });
+    el.querySelector('.prod-pie').appendChild(btn);
+    return el;
+  }
+
   function pintarGrilla(lista, mostrarCategoria) {
     $('sinResultado').hidden = lista.length > 0;
     grilla.innerHTML = '';
-    lista.forEach(p => {
-      const cat = CATEGORIAS.find(c => c.id === p.cat);
-      const el = document.createElement('article');
-      el.className = 'prod';
-      el.innerHTML =
-        (mostrarCategoria && cat ? '<div class="prod-cat">' + cat.nombre + '</div>' : '') +
-        '<h3>' + p.nombre + '</h3>' +
-        '<p class="prod-desc">' + (p.desc || '') + '</p>' +
-        '<div class="prod-pie">' +
-          '<div class="prod-precio">' + plata(p.precio) + precioUnidad(p) + '</div>' +
-        '</div>';
-      const btn = document.createElement('button');
-      btn.className = 'btn-add'; btn.type = 'button';
-      btn.textContent = 'Agregar';
-      btn.setAttribute('aria-label', 'Agregar ' + p.nombre + ' al pedido');
-      btn.addEventListener('click', () => {
-        sumar(p.id, 1);
-        btn.textContent = '✓ Agregado'; btn.classList.add('ok');
-        setTimeout(() => { btn.textContent = 'Agregar'; btn.classList.remove('ok'); }, 1100);
-      });
-      el.querySelector('.prod-pie').appendChild(btn);
-      grilla.appendChild(el);
-    });
+    lista.forEach(p => grilla.appendChild(tarjeta(p, mostrarCategoria)));
   }
+
+  /* ── Nuevos ingresos: carrusel ── */
+  const carru = $('carru'), puntos = $('carruPuntos');
+  const nombresNuevos = new Set(NUEVOS.map(normalizar));
+
+  function pintarNuevos() {
+    const lista = PRODUCTOS.filter(p => p.nuevo || nombresNuevos.has(normalizar(p.nombre)));
+    $('nuevos').hidden = lista.length === 0;
+    $('linkNuevos').hidden = lista.length === 0;
+    carru.innerHTML = '';
+    lista.forEach(p => carru.appendChild(tarjeta(p, true, true)));
+    carru.scrollLeft = 0;
+    actualizarCarru();
+  }
+
+  // Cuánto se corre con cada flecha: una tarjeta más el espacio entre tarjetas.
+  function paso() {
+    const t = carru.firstElementChild;
+    return t ? t.offsetWidth + parseFloat(getComputedStyle(carru).columnGap || 0) : 0;
+  }
+  // Cantidad de "paradas" posibles: una por tarjeta que puede quedar primera.
+  function paradas() {
+    const p = paso();
+    return p ? Math.round((carru.scrollWidth - carru.clientWidth) / p) + 1 : 1;
+  }
+
+  function actualizarCarru() {
+    const fin = carru.scrollWidth - carru.clientWidth;
+    $('carruAnt').disabled = carru.scrollLeft <= 2;
+    $('carruSig').disabled = carru.scrollLeft >= fin - 2;
+    const total = paradas(), actual = Math.round(carru.scrollLeft / (paso() || 1));
+    if (puntos.children.length !== total) {
+      puntos.innerHTML = '';
+      if (total > 1) for (let i = 0; i < total; i++) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Ir a la posición ' + (i + 1) + ' de ' + total);
+        b.addEventListener('click', () => { frenarAuto(); carru.scrollTo({ left: i * paso() }); });
+        puntos.appendChild(b);
+      }
+    }
+    [...puntos.children].forEach((b, i) => b.setAttribute('aria-current', String(i === actual)));
+  }
+
+  $('carruAnt').addEventListener('click', () => { frenarAuto(); carru.scrollBy({ left: -paso() }); });
+  $('carruSig').addEventListener('click', () => { frenarAuto(); carru.scrollBy({ left: paso() }); });
+  carru.addEventListener('scroll', actualizarCarru, { passive: true });
+  window.addEventListener('resize', actualizarCarru);
+
+  // Pasa solo cada 5 segundos. Se pausa si el mouse está encima o el foco adentro,
+  // y se apaga del todo cuando la persona lo mueve a mano.
+  const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let autoActivo = !sinMovimiento, pausado = false;
+  function frenarAuto() { autoActivo = false; }
+  $('nuevos').addEventListener('mouseenter', () => { pausado = true; });
+  $('nuevos').addEventListener('mouseleave', () => { pausado = false; });
+  $('nuevos').addEventListener('focusin', () => { pausado = true; });
+  $('nuevos').addEventListener('focusout', () => { pausado = false; });
+  carru.addEventListener('pointerdown', frenarAuto);
+  carru.addEventListener('wheel', e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) frenarAuto(); }, { passive: true });
+  setInterval(() => {
+    if (!autoActivo || pausado || document.hidden || $('nuevos').hidden) return;
+    const fin = carru.scrollWidth - carru.clientWidth;
+    if (fin <= 0) return;
+    carru.scrollTo({ left: carru.scrollLeft >= fin - 2 ? 0 : carru.scrollLeft + paso() });
+  }, 5000);
+
+  pintarNuevos();
 
   /* ── Carrito ── */
   function sumar(id, delta) {
@@ -1190,7 +1544,7 @@ let PRODUCTOS = [
     };
     const iCat = col('categoria'), iNom = col('producto', 'nombre'), iPre = col('precio'),
           iUni = col('unidad'), iDes = col('descripcion'), iEmo = col('emoji'),
-          iMos = col('mostrarenlaweb', 'mostrar');
+          iMos = col('mostrarenlaweb', 'mostrar'), iNue = col('nuevo', 'novedad'), iFot = col('foto', 'imagen');
     if (iNom === -1 || iPre === -1) return [];
 
     const porNombre = {};
@@ -1220,7 +1574,9 @@ let PRODUCTOS = [
         precio: precio,
         unidad: dato(iUni) || '1 kg',
         emoji: dato(iEmo) || cat.emoji,
-        desc: dato(iDes)
+        desc: dato(iDes),
+        nuevo: /^(si|s|x|1|true)$/i.test(normalizar(dato(iNue))),
+        foto: dato(iFot)
       });
     });
     return salida;
@@ -1238,6 +1594,7 @@ let PRODUCTOS = [
       carrito.clear();          // los ids cambiaron: arrancamos el pedido de cero
       pintarCarrito();
       pintarCategorias();
+      pintarNuevos();
       pintarVista(false);
     } catch (e) {
       console.warn('No se pudo leer la planilla, se usa el catálogo del archivo:', e.message);
