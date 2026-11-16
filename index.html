@@ -124,19 +124,53 @@ section { scroll-margin-top: 76px; }
 .borrar-busq:hover { color: var(--tinta); background: var(--fondo-2); }
 
 /* ── CATEGORÍAS ── */
-.grid-cat { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.grid-cat { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
 .cat-card {
-  background: var(--card); border: 1px solid var(--borde); border-radius: var(--radio);
-  padding: 16px 18px; text-align: left; color: var(--tinta); width: 100%;
-  display: flex; align-items: center; gap: 12px;
-  transition: border-color .15s;
+  background: var(--card); border: 1px solid var(--borde); border-radius: 14px;
+  padding: 0; text-align: left; color: var(--tinta); width: 100%; overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 1px 2px rgba(31,42,35,.04);
+  transition: border-color .2s, box-shadow .2s, transform .2s;
 }
-.cat-card:hover { border-color: var(--verde); }
+.cat-card:hover { border-color: var(--verde); box-shadow: 0 10px 24px -12px rgba(31,42,35,.28); transform: translateY(-2px); }
 .cat-card:hover .cat-ver { transform: translateX(3px); color: var(--verde); }
+.cat-card:hover .cat-slide.activa img { transform: scale(1.06); }
+/* Carrusel de fotos de la categoría */
+.cat-fotos { position: relative; aspect-ratio: 4 / 3; background: #fff; overflow: hidden; border-bottom: 1px solid var(--borde); }
+.cat-slide { position: absolute; inset: 0; transform: translateX(100%); transition: transform .7s cubic-bezier(.65,0,.35,1); }
+.cat-slide.activa { transform: translateX(0); }
+.cat-slide.sale { transform: translateX(-100%); }
+.cat-prod {
+  position: absolute; left: 10px; right: 10px; bottom: 34px; z-index: 1; width: fit-content; max-width: calc(100% - 20px);
+  padding: 4px 10px; border-radius: 99px; background: rgba(255,255,255,.94); color: var(--tinta);
+  font-size: 12.5px; font-weight: 600; line-height: 1.35; box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cat-slide img { width: 100%; height: 100%; object-fit: cover; transition: transform 4s ease; }
+.cat-sin-foto { position: absolute; inset: 0; display: grid; place-items: center; font-size: 3.2rem; background: var(--fondo-2); }
+.cat-puntos {
+  position: absolute; left: 10px; bottom: 10px; z-index: 1; display: flex; gap: 4px;
+  padding: 5px 7px; border-radius: 99px; background: rgba(31,42,35,.38); backdrop-filter: blur(4px);
+}
+.cat-puntos i { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.55); transition: width .3s, background .3s; }
+.cat-puntos i.activo { width: 14px; border-radius: 3px; background: #fff; }
+.cat-emoji {
+  position: absolute; right: 10px; top: 10px; z-index: 1; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,.92); display: grid; place-items: center; font-size: 17px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+.cat-pie { display: flex; align-items: center; gap: 10px; padding: 13px 16px 14px; }
 .cat-txt { flex: 1; min-width: 0; }
-.cat-nom { font-size: 1rem; font-weight: 600; }
+.cat-nom { font-size: 1.05rem; font-weight: 600; line-height: 1.25; }
 .cat-cant { font-size: 13px; color: var(--gris); }
-.cat-ver { flex: none; color: var(--borde-2); transition: transform .15s, color .15s; display: grid; }
+.cat-ver {
+  flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--verde-cl);
+  color: var(--verde); transition: transform .2s, background .2s; display: grid; place-items: center;
+}
+.cat-card:hover .cat-ver { background: var(--verde); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .cat-slide, .cat-slide img, .cat-card { transition: none; }
+}
 
 .barra-vuelta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
 .volver {
@@ -328,11 +362,13 @@ footer { background: var(--tinta); color: #C9CFC8; }
   .hero p { font-size: 1rem; }
   .hero-btns a { flex: 1; text-align: center; }
   .sec { padding-top: 52px; padding-bottom: 60px; }
-  .grid-cat { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .cat-card { padding: 13px 12px; }
+  .grid-cat { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cat-pie { padding: 10px 12px 11px; }
   .cat-nom { font-size: 14.5px; }
   .cat-cant { font-size: 12px; }
   .cat-ver { display: none; }
+  .cat-emoji { width: 28px; height: 28px; font-size: 14px; right: 8px; top: 8px; }
+  .cat-prod { font-size: 11px; padding: 3px 8px; left: 8px; bottom: 30px; max-width: calc(100% - 16px); }
   .grid-prod { grid-template-columns: 1fr 1fr; gap: 8px; }
   .prod { padding: 14px 12px; }
   .prod-desc { font-size: 12.5px; }
@@ -597,7 +633,7 @@ const CONFIG = {
 
 /* ═══════════════════════════════════════════════════════════════
    PRODUCTOS — agregá, sacá o editá lo que quieras.
-   Los precios son de ejemplo: reemplazalos por los reales.
+   Copia de la planilla de Google (16/11/2026): se usa solo si la planilla no carga.
    Cada producto necesita: id (único), nombre, cat, precio, unidad, emoji.
    ═══════════════════════════════════════════════════════════════ */
 const CATEGORIAS = [
@@ -621,253 +657,307 @@ const CATEGORIAS = [
 ];
 
 let PRODUCTOS = [
-  { id:'p001', cat:'secos', nombre:'Almendras Non Pareil', precio:37000, unidad:'1 kg', emoji:'🌰', desc:'Calibre 25/27, enteras con piel.' },
-  { id:'p002', cat:'secos', nombre:'Nuez mariposa blanca', precio:34000, unidad:'1 kg', emoji:'🥜', desc:'Mitades parejas, sin cáscara.' },
-  { id:'p003', cat:'secos', nombre:'Nuez pecán partida', precio:37000, unidad:'1 kg', emoji:'🥜', desc:'Ideal para repostería y ensaladas.' },
-  { id:'p004', cat:'secos', nombre:'Castaña de cajú entera', precio:25000, unidad:'1 kg', emoji:'🥥', desc:'Natural, calibre W3/W4.' },
-  { id:'p005', cat:'secos', nombre:'Castaña de cajú partida', precio:19000, unidad:'1 kg', emoji:'🥥', desc:'Más económica, misma calidad.' },
-  { id:'p006', cat:'secos', nombre:'Castaña de Pará pelada', precio:49000, unidad:'1 kg', emoji:'🌰', desc:'Alta en selenio.' },
-  { id:'p007', cat:'secos', nombre:'Avellanas peladas', precio:50000, unidad:'1 kg', emoji:'🌰', desc:'Calibre 9/11.' },
-  { id:'p008', cat:'secos', nombre:'Pistacho pelado natural', precio:90000, unidad:'1 kg', emoji:'🟢', desc:'Pepa sin cáscara, sin sal.' },
-  { id:'p009', cat:'secos', nombre:'Maní repelado salado', precio:6000, unidad:'1 kg', emoji:'🥜', desc:'Tostado y salado.' },
-  { id:'p010', cat:'secos', nombre:'Maní repelado tostado sin sal', precio:5000, unidad:'1 kg', emoji:'🥜', desc:'Tostado natural.' },
-  { id:'p011', cat:'secos', nombre:'Maní garrapiñada', precio:8000, unidad:'1 kg', emoji:'🥜', desc:'Clásico, con azúcar caramelizada.' },
-  { id:'p012', cat:'secos', nombre:'Mix energía premium', precio:35000, unidad:'1 kg', emoji:'✨', desc:'Mezcla de frutos secos y semillas.' },
-  { id:'p013', cat:'secos', nombre:'Mix premium con pasas', precio:34000, unidad:'1 kg', emoji:'🍇', desc:'Con pasas de uva.' },
-  { id:'p014', cat:'secos', nombre:'Mix europeo', precio:54000, unidad:'1 kg', emoji:'🌍', desc:'Selección de frutos secos importados.' },
-  { id:'p015', cat:'secos', nombre:'Mix frutas secas A.N.C.', precio:30200, unidad:'1 kg', emoji:'🥜', desc:'Almendras, nueces y castañas.' },
-  { id:'p016', cat:'secos', nombre:'Mix frutas secas con pasas', precio:25000, unidad:'1 kg', emoji:'🍇', desc:'Con el agregado de pasas.' },
-  { id:'p017', cat:'secos', nombre:'Chips de banana', precio:20000, unidad:'1 kg', emoji:'🍌', desc:'Crocantes, ideales para picar.' },
-  { id:'p018', cat:'secos', nombre:'Pasas sultaninas rubias', precio:25000, unidad:'1 kg', emoji:'🍇', desc:'Sin semilla, bien tiernas.' },
-  { id:'p019', cat:'secos', nombre:'Pasas sultaninas morochas', precio:9000, unidad:'1 kg', emoji:'🍇', desc:'Más dulces que las rubias.' },
-  { id:'p020', cat:'secos', nombre:'Pasas jumbo superior', precio:8000, unidad:'1 kg', emoji:'🍇', desc:'De grano grande.' },
-  { id:'p021', cat:'secos', nombre:'Dátiles de Egipto', precio:7000, unidad:'1 kg', emoji:'🫐', desc:'Endulzan naturalmente.' },
-  { id:'p022', cat:'secos', nombre:'Ciruela de Agen sin carozo', precio:13000, unidad:'1 kg', emoji:'🟣', desc:'Tiernas, listas para comer.' },
-  { id:'p023', cat:'secos', nombre:'Higos turcos (Esmirna)', precio:46000, unidad:'1 kg', emoji:'🟤', desc:'Secos, de primera calidad.' },
-  { id:'p024', cat:'secos', nombre:'Arándanos pasas', precio:22000, unidad:'1 kg', emoji:'🫐', desc:'Deshidratados.' },
-  { id:'p025', cat:'secos', nombre:'Guinda taxo roja', precio:8000, unidad:'1 kg', emoji:'🍒', desc:'Para repostería y decoración.' },
-  { id:'p026', cat:'secos', nombre:'Tomates secos', precio:23000, unidad:'1 kg', emoji:'🍅', desc:'Para hidratar en aceite.' },
-
-  { id:'p027', cat:'cereales', nombre:'Avena tradicional', precio:2500, unidad:'1 kg', emoji:'🥣', desc:'Arrollada, la de siempre.' },
-  { id:'p028', cat:'cereales', nombre:'Avena instantánea', precio:2800, unidad:'1 kg', emoji:'🥣', desc:'De cocción rápida.' },
-  { id:'p029', cat:'cereales', nombre:'Avena extra fina', precio:2500, unidad:'1 kg', emoji:'🥣', desc:'Más fina, se disuelve mejor.' },
-  { id:'p030', cat:'cereales', nombre:'Arroz yamaní', precio:2900, unidad:'1 kg', emoji:'🍚', desc:'Integral, de grano largo.' },
-  { id:'p031', cat:'cereales', nombre:'Arroz doble fortuna', precio:2500, unidad:'1 kg', emoji:'🍚', desc:'Blanco, grano largo fino.' },
-  { id:'p032', cat:'cereales', nombre:'Arroz doble carolina', precio:2900, unidad:'1 kg', emoji:'🍚', desc:'Grano corto, rinde bien.' },
-  { id:'p033', cat:'cereales', nombre:'Arroz carnaroli (risotto)', precio:4400, unidad:'1 kg', emoji:'🍚', desc:'El indicado para risotto.' },
-  { id:'p034', cat:'cereales', nombre:'Maíz pisado blanco', precio:2900, unidad:'1 kg', emoji:'🌽', desc:'Para locro y guisos.' },
-  { id:'p035', cat:'cereales', nombre:'Maíz pisingallo', precio:1600, unidad:'1 kg', emoji:'🍿', desc:'Para hacer pochoclo en casa.' },
-  { id:'p036', cat:'cereales', nombre:'Sémola candeal', precio:1900, unidad:'1 kg', emoji:'🌾', desc:'Para pastas caseras y ñoquis.' },
-  { id:'p037', cat:'cereales', nombre:'Copos con azúcar', precio:4000, unidad:'1 kg', emoji:'🥣', desc:'Copos de maíz azucarados.' },
-  { id:'p038', cat:'cereales', nombre:'Copos sin azúcar', precio:3500, unidad:'1 kg', emoji:'🥣', desc:'Copos de maíz naturales.' },
-  { id:'p039', cat:'cereales', nombre:'Burbujas de maíz inflado', precio:11000, unidad:'1 kg', emoji:'🍯', desc:'Azucaradas, livianas.' },
-  { id:'p040', cat:'cereales', nombre:'Granix aritos frutales', precio:10000, unidad:'1 kg', emoji:'🍩', desc:'Cereal de colores.' },
-  { id:'p041', cat:'cereales', nombre:'Granix aritos con miel', precio:10000, unidad:'1 kg', emoji:'🍯', desc:'Con miel.' },
-  { id:'p042', cat:'cereales', nombre:'Granix bocaditos de frutilla', precio:15000, unidad:'1 kg', emoji:'🍓', desc:'Rellenos.' },
-  { id:'p043', cat:'cereales', nombre:'Granix bocaditos de avena', precio:14000, unidad:'1 kg', emoji:'🥣', desc:'Rellenos de avena.' },
-  { id:'p044', cat:'cereales', nombre:'Granix bocaditos de avellana', precio:15000, unidad:'1 kg', emoji:'🌰', desc:'Rellenos de avellana.' },
-  { id:'p045', cat:'cereales', nombre:'Almohaditas de frutilla', precio:10000, unidad:'1 kg', emoji:'🍓', desc:'Rellenas.' },
-  { id:'p046', cat:'cereales', nombre:'Almohaditas de chocolate negro', precio:15000, unidad:'1 kg', emoji:'🍫', desc:'Rellenas de chocolate.' },
-  { id:'p047', cat:'cereales', nombre:'Bolitas de chocolate', precio:9000, unidad:'1 kg', emoji:'⚫', desc:'Cereal con cobertura.' },
-
-  { id:'p048', cat:'harinas', nombre:'Harina de almendras', precio:27000, unidad:'1 kg', emoji:'🌰', desc:'Sin TACC, baja en carbohidratos.' },
-  { id:'p049', cat:'harinas', nombre:'Harina de avena', precio:2900, unidad:'1 kg', emoji:'🌾', desc:'Molida fina.' },
-  { id:'p050', cat:'harinas', nombre:'Harina de arroz blanca', precio:1900, unidad:'1 kg', emoji:'🌾', desc:'Apta para celíacos.' },
-  { id:'p051', cat:'harinas', nombre:'Harina de maíz blanco', precio:3900, unidad:'1 kg', emoji:'🌽', desc:'Para polenta y panificados.' },
-  { id:'p052', cat:'harinas', nombre:'Harina paraguaya', precio:3000, unidad:'1 kg', emoji:'🌽', desc:'Para chipá y sopa paraguaya.' },
-  { id:'p053', cat:'harinas', nombre:'Fécula de mandioca', precio:3700, unidad:'1 kg', emoji:'🤍', desc:'Sin TACC, para chipá y panes.' },
-  { id:'p054', cat:'harinas', nombre:'Fariña de mandioca', precio:2900, unidad:'1 kg', emoji:'🟡', desc:'Tostada, típica del litoral.' },
-  { id:'p055', cat:'harinas', nombre:'Almidón de maíz', precio:2500, unidad:'1 kg', emoji:'🤍', desc:'Maicena, para espesar y repostería.' },
-  { id:'p056', cat:'harinas', nombre:'Panko blanco Gochiso', precio:11000, unidad:'500 g', emoji:'🍞', desc:'Pan rallado japonés, extra crocante.' },
-  { id:'p057', cat:'harinas', nombre:'Panko blanco Gochiso', precio:6000, unidad:'250 g', emoji:'🍞', desc:'Presentación chica.' },
-  { id:'p058', cat:'harinas', nombre:'Polvo de hornear', precio:8000, unidad:'1 kg', emoji:'🥄', desc:'Leudante en polvo.' },
-  { id:'p059', cat:'harinas', nombre:'Bicarbonato de sodio', precio:5000, unidad:'1 kg', emoji:'🥄', desc:'Uso alimenticio y de limpieza.' },
-  { id:'p060', cat:'harinas', nombre:'Azúcar impalpable', precio:2900, unidad:'1 kg', emoji:'❄️', desc:'Marca Calex, para decorar.' },
-  { id:'p061', cat:'harinas', nombre:'Cascarilla de cacao', precio:10000, unidad:'1 kg', emoji:'🍫', desc:'Para infusión o repostería.' },
-
-  { id:'p062', cat:'legumbres', nombre:'Lentejas nacionales', precio:4000, unidad:'1 kg', emoji:'🫘', desc:'No necesitan remojo previo.' },
-  { id:'p063', cat:'legumbres', nombre:'Lentejón canadiense', precio:4900, unidad:'1 kg', emoji:'🫘', desc:'De grano grande.' },
-  { id:'p064', cat:'legumbres', nombre:'Lenteja turca roja', precio:4900, unidad:'1 kg', emoji:'🟠', desc:'Se deshace: ideal para sopas.' },
-  { id:'p065', cat:'legumbres', nombre:'Porotos pallares', precio:7900, unidad:'1 kg', emoji:'⚪', desc:'Grandes y cremosos.' },
-  { id:'p066', cat:'legumbres', nombre:'Porotos lupines', precio:4600, unidad:'1 kg', emoji:'🟡', desc:'Ricos en proteína.' },
-  { id:'p067', cat:'legumbres', nombre:'Texturizado de soja fino', precio:3600, unidad:'1 kg', emoji:'🟤', desc:'Para milanesas y rellenos.' },
-  { id:'p068', cat:'legumbres', nombre:'Texturizado de soja grueso', precio:3600, unidad:'1 kg', emoji:'🟤', desc:'Para guisos y salsas.' },
-  { id:'p069', cat:'legumbres', nombre:'Sopa juliana diet', precio:20000, unidad:'1 kg', emoji:'🥕', desc:'Mix de verduras deshidratadas.' },
-
-  { id:'p070', cat:'semillas', nombre:'Chía premium', precio:15000, unidad:'1 kg', emoji:'⚫', desc:'Omega 3 y fibra.' },
-  { id:'p071', cat:'semillas', nombre:'Lino en semillas', precio:3500, unidad:'1 kg', emoji:'🟫', desc:'Para moler en el momento.' },
-  { id:'p072', cat:'semillas', nombre:'Girasol pelado extra', precio:2600, unidad:'1 kg', emoji:'🌻', desc:'Crudo, sin sal.' },
-  { id:'p073', cat:'semillas', nombre:'Girasol black', precio:5000, unidad:'1 kg', emoji:'🌻', desc:'Variedad de grano oscuro.' },
-  { id:'p074', cat:'semillas', nombre:'Sésamo integral', precio:5000, unidad:'1 kg', emoji:'🌾', desc:'Con cáscara.' },
-  { id:'p075', cat:'semillas', nombre:'Semillas de zapallo crudas', precio:20000, unidad:'1 kg', emoji:'🎃', desc:'Peladas, sin sal.' },
-  { id:'p076', cat:'semillas', nombre:'Psyllium (zaragatona)', precio:22000, unidad:'1 kg', emoji:'🌱', desc:'Fibra soluble.' },
-  { id:'p077', cat:'semillas', nombre:'Mezcla de semillas', precio:10000, unidad:'1 kg', emoji:'🌱', desc:'Chía, lino, sésamo y girasol.' },
-
-  { id:'p078', cat:'especias', nombre:'Ajo granulado', precio:16000, unidad:'1 kg', emoji:'🧄', desc:'Grano grueso.' },
-  { id:'p079', cat:'especias', nombre:'Ajo en polvo', precio:10000, unidad:'1 kg', emoji:'🧄', desc:'Molido fino.' },
-  { id:'p080', cat:'especias', nombre:'Canela molida', precio:19000, unidad:'1 kg', emoji:'🟤', desc:'Pura.' },
-  { id:'p081', cat:'especias', nombre:'Canela en rama', precio:60000, unidad:'1 kg', emoji:'🪵', desc:'Para infusiones y almíbares.' },
-  { id:'p082', cat:'especias', nombre:'Cúrcuma', precio:13000, unidad:'1 kg', emoji:'🟡', desc:'Molida.' },
-  { id:'p083', cat:'especias', nombre:'Jengibre molido', precio:16000, unidad:'1 kg', emoji:'🫚', desc:'Seco, en polvo.' },
-  { id:'p084', cat:'especias', nombre:'Pimienta negra molida', precio:33000, unidad:'1 kg', emoji:'⚫', desc:'Molienda fina.' },
-  { id:'p085', cat:'especias', nombre:'Pimienta blanca molida', precio:65000, unidad:'1 kg', emoji:'⚪', desc:'Más suave que la negra.' },
-  { id:'p086', cat:'especias', nombre:'Pimentón extra', precio:13000, unidad:'1 kg', emoji:'🔴', desc:'Dulce, color intenso.' },
-  { id:'p087', cat:'especias', nombre:'Pimentón español puro', precio:22000, unidad:'1 kg', emoji:'🔴', desc:'Importado.' },
-  { id:'p088', cat:'especias', nombre:'Pimentón dulce', precio:9000, unidad:'1 kg', emoji:'🔴', desc:'Para guisos y adobos.' },
-  { id:'p089', cat:'especias', nombre:'Pimentón ahumado', precio:23000, unidad:'1 kg', emoji:'🔥', desc:'Sabor ahumado.' },
-  { id:'p090', cat:'especias', nombre:'Paprika', precio:10000, unidad:'1 kg', emoji:'🌶️', desc:'Suave y aromática.' },
-  { id:'p091', cat:'especias', nombre:'Ají molido extra', precio:14000, unidad:'1 kg', emoji:'🌶️', desc:'Picante.' },
-  { id:'p092', cat:'especias', nombre:'Orégano', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'De primera.' },
-  { id:'p093', cat:'especias', nombre:'Provenzal', precio:14000, unidad:'1 kg', emoji:'🌿', desc:'Ajo y perejil.' },
-  { id:'p094', cat:'especias', nombre:'Adobo para pizza', precio:12000, unidad:'1 kg', emoji:'🍕', desc:'Mezcla lista.' },
-  { id:'p095', cat:'especias', nombre:'Curry en polvo', precio:10000, unidad:'1 kg', emoji:'🟡', desc:'Mezcla clásica.' },
-  { id:'p096', cat:'especias', nombre:'Baharat 7 especias', precio:25000, unidad:'1 kg', emoji:'🌶️', desc:'Mezcla árabe.' },
-  { id:'p097', cat:'especias', nombre:'Clavo de olor en grano', precio:50000, unidad:'1 kg', emoji:'🟤', desc:'Entero.' },
-  { id:'p098', cat:'especias', nombre:'Anís en semilla', precio:15000, unidad:'1 kg', emoji:'🌰', desc:'Para repostería e infusiones.' },
-  { id:'p099', cat:'especias', nombre:'Anís estrellado', precio:60000, unidad:'1 kg', emoji:'⭐', desc:'Entero.' },
-  { id:'p100', cat:'especias', nombre:'Coriandro en grano', precio:3900, unidad:'1 kg', emoji:'🌰', desc:'Semilla de cilantro.' },
-  { id:'p101', cat:'especias', nombre:'Hinojo en grano', precio:10000, unidad:'1 kg', emoji:'🌰', desc:'Digestivo.' },
-  { id:'p102', cat:'especias', nombre:'Fenogreco', precio:8000, unidad:'1 kg', emoji:'🟡', desc:'En grano.' },
-  { id:'p103', cat:'especias', nombre:'Sal del Himalaya', precio:3000, unidad:'1 kg', emoji:'🧂', desc:'Rosada, molida.' },
-  { id:'p104', cat:'especias', nombre:'Sal marina fina', precio:2300, unidad:'500 g', emoji:'🧂', desc:'Imperio Natural.' },
-  { id:'p105', cat:'especias', nombre:'Levadura de cerveza', precio:11000, unidad:'1 kg', emoji:'🍺', desc:'En escamas.' },
-
-  { id:'p106', cat:'yuyos', nombre:'Boldo', precio:13000, unidad:'1 kg', emoji:'🌿', desc:'Digestivo, hoja entera.' },
-  { id:'p107', cat:'yuyos', nombre:'Manzanilla flor de 1º', precio:55000, unidad:'1 kg', emoji:'🌼', desc:'Flor entera.' },
-  { id:'p108', cat:'yuyos', nombre:'Romero', precio:14000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.' },
-  { id:'p109', cat:'yuyos', nombre:'Rompepiedras', precio:26000, unidad:'1 kg', emoji:'🌿', desc:'Tradicional para riñones.' },
-  { id:'p110', cat:'yuyos', nombre:'Cedrón', precio:35000, unidad:'1 kg', emoji:'🍃', desc:'Aromático y digestivo.' },
-  { id:'p111', cat:'yuyos', nombre:'Poleo', precio:17000, unidad:'1 kg', emoji:'🍃', desc:'Clásico del mate.' },
-  { id:'p112', cat:'yuyos', nombre:'Ortiga', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.' },
-  { id:'p113', cat:'yuyos', nombre:'Tomillo', precio:16000, unidad:'1 kg', emoji:'🌿', desc:'Para infusión y cocina.' },
-  { id:'p114', cat:'yuyos', nombre:'Marcela', precio:17000, unidad:'1 kg', emoji:'🌼', desc:'Digestiva.' },
-  { id:'p115', cat:'yuyos', nombre:'Artemisa', precio:14000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.' },
-  { id:'p116', cat:'yuyos', nombre:'Doradilla', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Tradicional.' },
-  { id:'p117', cat:'yuyos', nombre:'Congorosa', precio:16000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.' },
-  { id:'p118', cat:'yuyos', nombre:'Cola de caballo', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Diurética.' },
-  { id:'p119', cat:'yuyos', nombre:'Amargón (diente de león)', precio:15000, unidad:'1 kg', emoji:'🌼', desc:'Hoja y raíz.' },
-  { id:'p120', cat:'yuyos', nombre:'Cardo mariano', precio:80000, unidad:'1 kg', emoji:'🌿', desc:'Semilla.' },
-  { id:'p121', cat:'yuyos', nombre:'Moringa', precio:30000, unidad:'1 kg', emoji:'🌿', desc:'Hoja molida.' },
-  { id:'p122', cat:'yuyos', nombre:'Menta en hoja', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Seca.' },
-  { id:'p123', cat:'yuyos', nombre:'Paico', precio:16000, unidad:'1 kg', emoji:'🌿', desc:'Digestivo.' },
-  { id:'p124', cat:'yuyos', nombre:'Hibiscus (flor de Jamaica)', precio:35000, unidad:'1 kg', emoji:'🌺', desc:'Para infusión fría o caliente.' },
-  { id:'p125', cat:'yuyos', nombre:'Alhucema (lavanda)', precio:50000, unidad:'1 kg', emoji:'💜', desc:'Flor seca.' },
-  { id:'p126', cat:'yuyos', nombre:'Yerba dulce con stevia', precio:49000, unidad:'1 kg', emoji:'🍃', desc:'Endulza naturalmente.' },
-  { id:'p127', cat:'yuyos', nombre:'Yerba 9 yuyos burrito', precio:4500, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita.' },
-  { id:'p128', cat:'yuyos', nombre:'Yerba 9 yuyos tradicional', precio:4500, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita, doypack.' },
-  { id:'p129', cat:'yuyos', nombre:'Yerba orgánica tradicional', precio:4900, unidad:'500 g', emoji:'🧉', desc:'Roapipo.' },
-  { id:'p130', cat:'yuyos', nombre:'Yerba orgánica suave', precio:4900, unidad:'500 g', emoji:'🧉', desc:'Roapipo.' },
-  { id:'p131', cat:'yuyos', nombre:'Yerba orgánica fuerte', precio:4900, unidad:'500 g', emoji:'🧉', desc:'Roapipo.' },
-
-  { id:'p132', cat:'dulces', nombre:'Azúcar granulada', precio:9000, unidad:'1 kg', emoji:'🍬', desc:'Grano grueso.' },
-  { id:'p133', cat:'dulces', nombre:'Azúcar mascabo', precio:4000, unidad:'1 kg', emoji:'🟤', desc:'Sin refinar.' },
-  { id:'p134', cat:'dulces', nombre:'Azúcar integral de caña', precio:6900, unidad:'1 kg', emoji:'🟤', desc:'Natural.' },
-  { id:'p135', cat:'dulces', nombre:'Stevia líquida Jual', precio:3900, unidad:'125 cc', emoji:'💧', desc:'Sin calorías.' },
-  { id:'p136', cat:'dulces', nombre:'Arrope de chañar', precio:9000, unidad:'450 ml', emoji:'🍯', desc:'Caseritos de la Villa.' },
-  { id:'p137', cat:'dulces', nombre:'Mielitus bronco pulmonar', precio:6500, unidad:'250 g', emoji:'🍯', desc:'Miel de carpincho.' },
-
-  { id:'p138', cat:'choco', nombre:'Chips de chocolate semiamargo', precio:13000, unidad:'1 kg', emoji:'🍫', desc:'Marca Alpino.' },
-  { id:'p139', cat:'choco', nombre:'Chips de chocolate blanco', precio:13000, unidad:'1 kg', emoji:'🤍', desc:'Marca Alpino.' },
-  { id:'p140', cat:'choco', nombre:'Maní con chocolate semiamargo', precio:23000, unidad:'1 kg', emoji:'🥜', desc:'Argenfrut.' },
-  { id:'p141', cat:'choco', nombre:'Almendras con chocolate con leche', precio:46000, unidad:'1 kg', emoji:'🌰', desc:'Argenfrut.' },
-  { id:'p142', cat:'choco', nombre:'Pasas con chocolate con leche', precio:25000, unidad:'1 kg', emoji:'🍇', desc:'Argenfrut.' },
-  { id:'p143', cat:'choco', nombre:'Lentejas de chocolate', precio:26000, unidad:'1 kg', emoji:'🔴', desc:'Argenfrut.' },
-  { id:'p144', cat:'choco', nombre:'Rocklets', precio:25000, unidad:'1 kg', emoji:'🔴', desc:'Clásicos.' },
-  { id:'p145', cat:'choco', nombre:'Rocklets mini', precio:25000, unidad:'1 kg', emoji:'🔴', desc:'Tamaño chico.' },
-  { id:'p146', cat:'choco', nombre:'Marroc bombón redondela', precio:19000, unidad:'500 g', emoji:'🍬', desc:'Pouch.' },
-  { id:'p147', cat:'choco', nombre:'Cacao amargo', precio:25000, unidad:'1 kg', emoji:'🍫', desc:'Puro, sin azúcar.' },
-  { id:'p148', cat:'choco', nombre:'Coco rallado low fat', precio:13000, unidad:'1 kg', emoji:'🥥', desc:'Reducido en grasa.' },
-  { id:'p149', cat:'choco', nombre:'Coco en escamas', precio:28000, unidad:'1 kg', emoji:'🥥', desc:'Escamas grandes.' },
-  { id:'p150', cat:'choco', nombre:'Leche de coco en polvo', precio:36000, unidad:'1 kg', emoji:'🥥', desc:'Se disuelve en agua.' },
-  { id:'p151', cat:'choco', nombre:'Barra de chocolate sin azúcar', precio:3400, unidad:'100 g', emoji:'🍫', desc:'Colonial.' },
-  { id:'p152', cat:'choco', nombre:'Barra de chocolate orgánico 80%', precio:5900, unidad:'100 g', emoji:'🍫', desc:'Colonial, 80% cacao.' },
-  { id:'p153', cat:'choco', nombre:'Gelatina sin sabor', precio:36000, unidad:'1 kg', emoji:'🥄', desc:'Neutra.' },
-  { id:'p154', cat:'choco', nombre:'Chantilly en polvo Ledevit', precio:5000, unidad:'250 g', emoji:'🍦', desc:'Se bate con leche fría.' },
-  { id:'p155', cat:'choco', nombre:'Colorante en pasta rojo', precio:2800, unidad:'15 g', emoji:'🔴', desc:'Fleibor.' },
-
-  { id:'p156', cat:'galletitas', nombre:'Pepas de membrillo Delicel', precio:2500, unidad:'200 g', emoji:'🍪', desc:'Clásicas.' },
-  { id:'p157', cat:'galletitas', nombre:'Smams pepas con membrillo', precio:3200, unidad:'150 g', emoji:'🍪', desc:'Sin TACC.' },
-  { id:'p158', cat:'galletitas', nombre:'Smams budín de vainilla', precio:5500, unidad:'250 g', emoji:'🍰', desc:'Sin TACC.' },
-  { id:'p159', cat:'galletitas', nombre:'Smams galletitas mousse de chocolate', precio:2500, unidad:'105 g', emoji:'🍪', desc:'Rellenas.' },
-  { id:'p160', cat:'galletitas', nombre:'Rincón Vegano pepas integrales', precio:2500, unidad:'170 g', emoji:'🍪', desc:'Veganas.' },
-  { id:'p161', cat:'galletitas', nombre:'Rincón Vegano pepas de avena y chía', precio:2500, unidad:'170 g', emoji:'🍪', desc:'Veganas.' },
-  { id:'p162', cat:'galletitas', nombre:'Rincón Vegano pepas de membrillo', precio:2400, unidad:'170 g', emoji:'🍪', desc:'Veganas.' },
-  { id:'p163', cat:'galletitas', nombre:'Rincón Vegano pepas de frambuesa', precio:2500, unidad:'180 g', emoji:'🍪', desc:'Veganas.' },
-  { id:'p164', cat:'galletitas', nombre:'Rincón Vegano pepas de cereza', precio:2500, unidad:'180 g', emoji:'🍪', desc:'Veganas.' },
-  { id:'p165', cat:'galletitas', nombre:'Pepas Vivamas', precio:3900, unidad:'1 paquete', emoji:'🍪', desc:'Sin TACC.' },
-  { id:'p166', cat:'galletitas', nombre:'Yin Yang tostaditas de chía', precio:1700, unidad:'120 g', emoji:'🫓', desc:'Livianas.' },
-  { id:'p167', cat:'galletitas', nombre:'Yin Yang tostaditas de quinoa', precio:1700, unidad:'120 g', emoji:'🫓', desc:'Livianas.' },
-  { id:'p168', cat:'galletitas', nombre:'Soyarroz finitos', precio:3500, unidad:'300 g', emoji:'🫓', desc:'Galletas de arroz.' },
-  { id:'p169', cat:'galletitas', nombre:'Soyarroz tradicional', precio:3500, unidad:'300 g', emoji:'🫓', desc:'Galletas de arroz.' },
-  { id:'p170', cat:'galletitas', nombre:'Almadre snacks tomate y romero', precio:3300, unidad:'130 g', emoji:'🍅', desc:'Masa madre.' },
-  { id:'p171', cat:'galletitas', nombre:'Almadre snacks rawmesan y remolacha', precio:3300, unidad:'130 g', emoji:'🟣', desc:'Masa madre.' },
-  { id:'p172', cat:'galletitas', nombre:'Almadre snacks sésamo y sal marina', precio:3300, unidad:'130 g', emoji:'🌾', desc:'Masa madre.' },
-
-  { id:'p173', cat:'pastas', nombre:'Wakas penne de maíz', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p174', cat:'pastas', nombre:'Wakas penne de quinoa', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p175', cat:'pastas', nombre:'Wakas penne de kale', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p176', cat:'pastas', nombre:'Wakas fusilli de maíz', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p177', cat:'pastas', nombre:'Wakas fusilli de amaranto', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p178', cat:'pastas', nombre:'Wakas fusilli de quinoa', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p179', cat:'pastas', nombre:'Wakas fusilli de chía', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p180', cat:'pastas', nombre:'Wakas fusilli de kale', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p181', cat:'pastas', nombre:'Wakas fusilli de alubia', precio:5300, unidad:'300 g', emoji:'🍝', desc:'Alto en proteína.' },
-  { id:'p182', cat:'pastas', nombre:'Wakas spaghetti de maíz', precio:5000, unidad:'400 g', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p183', cat:'pastas', nombre:'Wakas risoni de alubia y arroz (espinaca)', precio:5900, unidad:'300 g', emoji:'🍚', desc:'Sin TACC.' },
-  { id:'p184', cat:'pastas', nombre:'Wakas risoni de alubia y arroz (zanahoria)', precio:5900, unidad:'300 g', emoji:'🍚', desc:'Sin TACC.' },
-  { id:'p185', cat:'pastas', nombre:'Fideos Soyarroz clásicos', precio:3000, unidad:'1 paquete', emoji:'🍝', desc:'Sin TACC.' },
-  { id:'p186', cat:'pastas', nombre:'Fideos Soyarroz espinaca', precio:3000, unidad:'1 paquete', emoji:'🍝', desc:'Sin TACC.' },
-
-  { id:'p187', cat:'bebidas', nombre:'Kombucha pomelo, hibisco y romero', precio:3900, unidad:'354 ml', emoji:'🥤', desc:'Bravia, en lata.' },
-  { id:'p188', cat:'bebidas', nombre:'Kombucha manzana verde y cedrón', precio:3900, unidad:'354 ml', emoji:'🥤', desc:'Bravia, en lata.' },
-  { id:'p189', cat:'bebidas', nombre:'Kombucha frutos rojos e higo', precio:3900, unidad:'354 ml', emoji:'🥤', desc:'Bravia, en lata.' },
-  { id:'p190', cat:'bebidas', nombre:'Kombucha limón, jengibre y matcha', precio:3900, unidad:'354 ml', emoji:'🥤', desc:'Bravia, en lata.' },
-  { id:'p191', cat:'bebidas', nombre:'Kombucha pétalo de rosa', precio:3900, unidad:'354 ml', emoji:'🌹', desc:'Bravia, en lata.' },
-  { id:'p192', cat:'bebidas', nombre:'Kéfir maracuyá', precio:4500, unidad:'500 cc', emoji:'🥛', desc:'Fermentado.' },
-  { id:'p193', cat:'bebidas', nombre:'Kéfir pomelo rosado', precio:4500, unidad:'500 cc', emoji:'🥛', desc:'Fermentado.' },
-  { id:'p194', cat:'bebidas', nombre:'Kéfir limón y jengibre', precio:4500, unidad:'500 cc', emoji:'🥛', desc:'Fermentado.' },
-  { id:'p195', cat:'bebidas', nombre:'Kéfir frutos del bosque', precio:4500, unidad:'500 cc', emoji:'🥛', desc:'Fermentado.' },
-  { id:'p196', cat:'bebidas', nombre:'Kéfir manzana roja', precio:4500, unidad:'500 cc', emoji:'🥛', desc:'Fermentado.' },
-  { id:'p197', cat:'bebidas', nombre:'Qué Kéfir neutro', precio:7500, unidad:'1 lt', emoji:'🥛', desc:'Botella PET.' },
-  { id:'p198', cat:'bebidas', nombre:'Qué Kéfir manzana roja', precio:7500, unidad:'1 lt', emoji:'🥛', desc:'Botella PET.' },
-  { id:'p199', cat:'bebidas', nombre:'Qué Kéfir manzana verde', precio:7500, unidad:'1 lt', emoji:'🥛', desc:'Botella PET.' },
-  { id:'p200', cat:'bebidas', nombre:'Qué Kéfir naranja', precio:7500, unidad:'1 lt', emoji:'🥛', desc:'Botella PET.' },
-  { id:'p201', cat:'bebidas', nombre:'Qué Kéfir pomelo rosado', precio:7500, unidad:'1 lt', emoji:'🥛', desc:'Botella PET.' },
-  { id:'p202', cat:'bebidas', nombre:'Qué Kéfir manzana y frutilla', precio:7500, unidad:'1 lt', emoji:'🥛', desc:'Botella PET.' },
-  { id:'p203', cat:'bebidas', nombre:'Soda prebiótica pomelo', precio:2400, unidad:'354 ml', emoji:'🥤', desc:'Cocoon.' },
-  { id:'p204', cat:'bebidas', nombre:'Soda prebiótica lima limón', precio:2400, unidad:'354 ml', emoji:'🥤', desc:'Cocoon.' },
-  { id:'p205', cat:'bebidas', nombre:'Yogur Quimya frutilla', precio:2500, unidad:'170 g', emoji:'🍓', desc:'Cremoso.' },
-  { id:'p206', cat:'bebidas', nombre:'Yogur Quimya mango y maracuyá', precio:2500, unidad:'170 g', emoji:'🥭', desc:'Cremoso.' },
-  { id:'p207', cat:'bebidas', nombre:'Yogur Quimya vainilla sin azúcar', precio:2500, unidad:'160 g', emoji:'🍦', desc:'Sin azúcar.' },
-  { id:'p208', cat:'bebidas', nombre:'Yogur Quimya frutilla sin azúcar', precio:2500, unidad:'160 g', emoji:'🍓', desc:'Sin azúcar.' },
-  { id:'p209', cat:'bebidas', nombre:'Yogur Quimya mango sin azúcar', precio:2500, unidad:'160 g', emoji:'🥭', desc:'Sin azúcar.' },
-  { id:'p210', cat:'bebidas', nombre:'Yogur Quimya arándanos sin azúcar', precio:2500, unidad:'160 g', emoji:'🫐', desc:'Sin azúcar.' },
-  { id:'p211', cat:'bebidas', nombre:'Yogur Crudda frutilla sin azúcar', precio:2800, unidad:'160 g', emoji:'🍓', desc:'Vegano.' },
-  { id:'p212', cat:'bebidas', nombre:'Yogur Crudda frutos del bosque', precio:2800, unidad:'160 g', emoji:'🫐', desc:'Vegano, sin azúcar.' },
-  { id:'p213', cat:'bebidas', nombre:'Hummus clásico Kyros', precio:3500, unidad:'230 g', emoji:'🫓', desc:'Listo para untar.' },
-  { id:'p214', cat:'bebidas', nombre:'Hummus con aceite de oliva Kyros', precio:3500, unidad:'230 g', emoji:'🫒', desc:'Listo para untar.' },
-  { id:'p215', cat:'bebidas', nombre:'Hummus con pimentón Kyros', precio:3500, unidad:'230 g', emoji:'🌶️', desc:'Listo para untar.' },
-
-  { id:'p216', cat:'barras', nombre:'Gentech Iron Bar chocolate', precio:1900, unidad:'1 barra', emoji:'🍫', desc:'Barra proteica.' },
-  { id:'p217', cat:'barras', nombre:'Gentech Iron Bar frutilla', precio:1900, unidad:'1 barra', emoji:'🍓', desc:'Barra proteica.' },
-  { id:'p218', cat:'barras', nombre:'Gentech Low Carb brownie', precio:2600, unidad:'1 barra', emoji:'🍫', desc:'Baja en carbohidratos.' },
-  { id:'p219', cat:'barras', nombre:'Entrenuts barra proteica naranja y choco', precio:1900, unidad:'1 barra', emoji:'🍊', desc:'Con proteína.' },
-  { id:'p220', cat:'barras', nombre:'Zannas barra de coco y cacao', precio:1400, unidad:'1 barra', emoji:'🥥', desc:'Sin azúcar agregada.' },
-  { id:'p221', cat:'barras', nombre:'Celienergy alfajor cacao y maní', precio:1900, unidad:'1 u', emoji:'🍫', desc:'Sin TACC.' },
-  { id:'p222', cat:'barras', nombre:'Celienergy alfajor de nuez', precio:1900, unidad:'1 u', emoji:'🌰', desc:'Sin TACC.' },
-  { id:'p223', cat:'barras', nombre:'Celienergy alfajor algarroba y zapallo', precio:1900, unidad:'1 u', emoji:'🎃', desc:'Sin TACC.' },
-  { id:'p224', cat:'barras', nombre:'Lulemuu alfajor de limón', precio:1000, unidad:'1 u', emoji:'🍋', desc:'Sin TACC.' },
-  { id:'p225', cat:'barras', nombre:'Lulemuu barra de arroz con frutilla', precio:900, unidad:'1 u', emoji:'🍓', desc:'Bañada.' },
-  { id:'p226', cat:'barras', nombre:'Lulemuu oblea rellena de limón', precio:1000, unidad:'1 u', emoji:'🍋', desc:'Limu.' },
-
-  { id:'p227', cat:'despensa', nombre:'Aceite de oliva virgen extra Areco', precio:7900, unidad:'250 ml', emoji:'🫒', desc:'Primera prensada.' },
-  { id:'p228', cat:'despensa', nombre:'Aceite de coco Cosaco', precio:7000, unidad:'360 ml', emoji:'🥥', desc:'Virgen.' },
-  { id:'p229', cat:'despensa', nombre:'Vinagreta de manzana Arytza', precio:6400, unidad:'250 cc', emoji:'🍎', desc:'Sin conservantes.' },
-  { id:'p230', cat:'despensa', nombre:'Pasta de maní natural Entrenuts', precio:3500, unidad:'370 g', emoji:'🥜', desc:'Solo maní molido.' },
-  { id:'p231', cat:'despensa', nombre:'Esencia de vainilla Proin', precio:1900, unidad:'100 cc', emoji:'🍶', desc:'Para repostería.' },
-  { id:'p232', cat:'despensa', nombre:'Esencia de vainilla', precio:1800, unidad:'30 cc', emoji:'🍶', desc:'Presentación chica.' },
-  { id:'p233', cat:'despensa', nombre:'Hongos de pino', precio:54000, unidad:'1 kg', emoji:'🍄', desc:'Deshidratados.' },
-  { id:'p234', cat:'despensa', nombre:'Melena de león en cápsulas', precio:14000, unidad:'30 caps', emoji:'🍄', desc:'Original Green.' }
+  { id:'p001', cat:'despensa', nombre:'Aceite de coco Cosaco', precio:6000, unidad:'360 ml', emoji:'🥥', desc:'Neutro' },
+  { id:'p002', cat:'especias', nombre:'Adobo para pizza', precio:10000, unidad:'1 kg', emoji:'🍕', desc:'Mezcla lista.' },
+  { id:'p003', cat:'especias', nombre:'Ají molido extra', precio:15000, unidad:'1 kg', emoji:'🌶️', desc:'Picante.' },
+  { id:'p004', cat:'especias', nombre:'Ajo en polvo', precio:10000, unidad:'1 kg', emoji:'🧄', desc:'Molido fino.' },
+  { id:'p005', cat:'especias', nombre:'Ajo granulado', precio:16000, unidad:'1 kg', emoji:'🧄', desc:'Grano grueso.' },
+  { id:'p006', cat:'barras', nombre:'Alfajor algarroba y zapallo', precio:1900, unidad:'1 u', emoji:'🎃', desc:'Celienergy sin TACC.' },
+  { id:'p007', cat:'barras', nombre:'Alfajor cacao y maní', precio:1900, unidad:'1 u', emoji:'🍫', desc:'Celienergy sin TACC.' },
+  { id:'p008', cat:'barras', nombre:'Alfajor de nuez', precio:1900, unidad:'1 u', emoji:'🌰', desc:'Celienergy sin TACC.' },
+  { id:'p009', cat:'yuyos', nombre:'Alhucema (lavanda)', precio:50000, unidad:'1 kg', emoji:'💜', desc:'Flor seca.' },
+  { id:'p010', cat:'choco', nombre:'Almendras con chocolate con leche', precio:44000, unidad:'1 kg', emoji:'🌰', desc:'Argenfrut.' },
+  { id:'p011', cat:'secos', nombre:'Almendras Non Pareil', precio:33000, unidad:'1 kg', emoji:'🌰', desc:'Calibre 25/27, enteras con piel.' },
+  { id:'p012', cat:'harinas', nombre:'Almidón de maíz', precio:2900, unidad:'1 kg', emoji:'🤍', desc:'Maicena, para espesar y repostería.' },
+  { id:'p013', cat:'yuyos', nombre:'Amargón (diente de león)', precio:15000, unidad:'1 kg', emoji:'🌼', desc:'Hoja y raíz.' },
+  { id:'p014', cat:'especias', nombre:'Anís en semilla', precio:15000, unidad:'1 kg', emoji:'🌰', desc:'Para repostería e infusiones.' },
+  { id:'p015', cat:'especias', nombre:'Anís estrellado', precio:48000, unidad:'1 kg', emoji:'⭐', desc:'Entero.' },
+  { id:'p016', cat:'secos', nombre:'Arándanos pasas', precio:23000, unidad:'1 kg', emoji:'🫐', desc:'Deshidratados.' },
+  { id:'p017', cat:'dulces', nombre:'Arrope de chañar', precio:8500, unidad:'450 ml', emoji:'🍯', desc:'Caseritos de la Villa.' },
+  { id:'p018', cat:'cereales', nombre:'Arroz carnaroli (risotto)', precio:4400, unidad:'1 kg', emoji:'🍚', desc:'El indicado para risotto.' },
+  { id:'p019', cat:'cereales', nombre:'Arroz doble carolina', precio:2900, unidad:'1 kg', emoji:'🍚', desc:'Grano corto, rinde bien.' },
+  { id:'p020', cat:'cereales', nombre:'Arroz doble fortuna', precio:2900, unidad:'1 kg', emoji:'🍚', desc:'Blanco, grano largo fino.' },
+  { id:'p021', cat:'yuyos', nombre:'Artemisa', precio:14000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.' },
+  { id:'p022', cat:'cereales', nombre:'Avena extra fina', precio:2900, unidad:'1 kg', emoji:'🥣', desc:'Más fina, se disuelve mejor.' },
+  { id:'p023', cat:'cereales', nombre:'Avena instantánea', precio:2500, unidad:'1 kg', emoji:'🥣', desc:'De cocción rápida.' },
+  { id:'p024', cat:'cereales', nombre:'Avena tradicional', precio:2500, unidad:'1 kg', emoji:'🥣', desc:'Arrollada, la de siempre.' },
+  { id:'p025', cat:'choco', nombre:'Azúcar impalpable', precio:3500, unidad:'1 kg', emoji:'❄️', desc:'Marca Calex, para decorar.' },
+  { id:'p026', cat:'dulces', nombre:'Azúcar mascabo', precio:4900, unidad:'1 kg', emoji:'🟤', desc:'Sin refinar.' },
+  { id:'p027', cat:'dulces', nombre:'Azúcar mascabo integral', precio:6900, unidad:'1 kg', emoji:'🟤', desc:'Natural.' },
+  { id:'p028', cat:'especias', nombre:'Baharat 7 especias', precio:25000, unidad:'1 kg', emoji:'🌶️', desc:'Mezcla árabe.' },
+  { id:'p029', cat:'yerba', nombre:'Baldo', precio:6900, unidad:'500 g', emoji:'🧉', desc:'' },
+  { id:'p030', cat:'barras', nombre:'Barrita Crudda peanut caramel', precio:2200, unidad:'1 u', emoji:'🥜', desc:'Con proteína de arveja, quinoa y pasta de maní.' },
+  { id:'p031', cat:'barras', nombre:'Barrita Crudda arándanos y nuez', precio:2300, unidad:'1 u', emoji:'🫐', desc:'Con proteína de arveja, quinoa, arándanos y nueces.' },
+  { id:'p032', cat:'choco', nombre:'Bicarbonato de sodio', precio:5000, unidad:'1 kg', emoji:'🥄', desc:'Uso alimenticio y de limpieza.' },
+  { id:'p033', cat:'choco', nombre:'Bocaditos rellenos de dulce de leche.', precio:25000, unidad:'1 kg', emoji:'🌰', desc:'' },
+  { id:'p034', cat:'yuyos', nombre:'Boldo', precio:20000, unidad:'1 kg', emoji:'🌿', desc:'Digestivo, hoja entera.' },
+  { id:'p035', cat:'cereales', nombre:'Bolitas de chocolate', precio:10000, unidad:'1 kg', emoji:'⚫', desc:'Cereal con cobertura.' },
+  { id:'p036', cat:'yuyos', nombre:'Burrito', precio:28000, unidad:'1 kg', emoji:'🌿', desc:'' },
+  { id:'p037', cat:'choco', nombre:'Cacao amargo', precio:14000, unidad:'1 kg', emoji:'🍫', desc:'Economico.' },
+  { id:'p038', cat:'choco', nombre:'Cacao amargo alpino', precio:35000, unidad:'1 kg', emoji:'🍫', desc:'Calidad asegurada.' },
+  { id:'p039', cat:'yerba', nombre:'Canarias', precio:6500, unidad:'500 g', emoji:'🧉', desc:'' },
+  { id:'p040', cat:'especias', nombre:'Canela en rama', precio:99000, unidad:'1 kg', emoji:'🪵', desc:'Para infusiones y almíbares.' },
+  { id:'p041', cat:'especias', nombre:'Canela molida', precio:15000, unidad:'1 kg', emoji:'🟤', desc:'Pura.' },
+  { id:'p042', cat:'choco', nombre:'Cascarilla de cacao', precio:7500, unidad:'1 kg', emoji:'🍫', desc:'Para infusión o repostería.' },
+  { id:'p043', cat:'secos', nombre:'Castaña de cajú entera', precio:25000, unidad:'1 kg', emoji:'🥥', desc:'Natural, calibre W3/W4.' },
+  { id:'p044', cat:'yuyos', nombre:'Cedrón', precio:35000, unidad:'1 kg', emoji:'🍃', desc:'Aromático y digestivo.' },
+  { id:'p045', cat:'choco', nombre:'Chantilly en polvo Ledevit', precio:5500, unidad:'250 g', emoji:'🍦', desc:'Se bate con leche fría.' },
+  { id:'p046', cat:'semillas', nombre:'Chía premium', precio:12000, unidad:'1 kg', emoji:'⚫', desc:'Omega 3 y fibra.' },
+  { id:'p047', cat:'secos', nombre:'Chips de banana', precio:20000, unidad:'1 kg', emoji:'🍌', desc:'Crocantes, ideales para picar.' },
+  { id:'p048', cat:'choco', nombre:'Chips de chocolate blanco', precio:13000, unidad:'1 kg', emoji:'🤍', desc:'Marca Alpino.' },
+  { id:'p049', cat:'choco', nombre:'Chips de chocolate semiamargo', precio:13000, unidad:'1 kg', emoji:'🍫', desc:'Marca Alpino.' },
+  { id:'p050', cat:'secos', nombre:'Ciruela sin carozo', precio:15000, unidad:'1 kg', emoji:'🟣', desc:'Tiernas, listas para comer.' },
+  { id:'p051', cat:'choco', nombre:'Coco en escamas', precio:28000, unidad:'1 kg', emoji:'🥥', desc:'Escamas grandes.' },
+  { id:'p052', cat:'choco', nombre:'Coco rallado low fat', precio:10000, unidad:'1 kg', emoji:'🥥', desc:'Reducido en grasa.' },
+  { id:'p053', cat:'yuyos', nombre:'Cola de caballo', precio:17000, unidad:'1 kg', emoji:'🌿', desc:'Diurética.' },
+  { id:'p054', cat:'yuyos', nombre:'Congorosa', precio:16000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.' },
+  { id:'p055', cat:'cereales', nombre:'Copos con azúcar', precio:5000, unidad:'1 kg', emoji:'🥣', desc:'Copos de maíz azucarados.' },
+  { id:'p056', cat:'cereales', nombre:'Copos sin azúcar', precio:4000, unidad:'1 kg', emoji:'🥣', desc:'Copos de maíz naturales.' },
+  { id:'p057', cat:'especias', nombre:'Coriandro en grano', precio:10000, unidad:'1 kg', emoji:'🌰', desc:'Semilla de cilantro.' },
+  { id:'p058', cat:'especias', nombre:'Cúrcuma', precio:12000, unidad:'1 kg', emoji:'🟡', desc:'Molida.' },
+  { id:'p059', cat:'especias', nombre:'Curry en polvo', precio:9000, unidad:'1 kg', emoji:'🟡', desc:'Mezcla clásica.' },
+  { id:'p060', cat:'secos', nombre:'Dátiles de Egipto', precio:12000, unidad:'1 kg', emoji:'🫐', desc:'Endulzan naturalmente.' },
+  { id:'p061', cat:'yuyos', nombre:'Doradilla', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Tradicional.' },
+  { id:'p062', cat:'barras', nombre:'Entrenuts barra proteica naranja y choco', precio:2200, unidad:'1 barra', emoji:'🍊', desc:'Con proteína.' },
+  { id:'p063', cat:'despensa', nombre:'Esencia de vainilla Proin', precio:2000, unidad:'100 cc', emoji:'🍶', desc:'Para repostería.' },
+  { id:'p064', cat:'harinas', nombre:'Fariña de mandioca', precio:3300, unidad:'1 kg', emoji:'🟡', desc:'Tostada, típica del litoral.' },
+  { id:'p065', cat:'harinas', nombre:'Fécula de mandioca', precio:3900, unidad:'1 kg', emoji:'🤍', desc:'Para chipá y panes.' },
+  { id:'p066', cat:'especias', nombre:'Fenogreco', precio:8000, unidad:'1 kg', emoji:'🟡', desc:'En grano.' },
+  { id:'p067', cat:'pastas', nombre:'Fideos Soyarroz clásicos', precio:3300, unidad:'1 paquete', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p068', cat:'pastas', nombre:'Fideos Soyarroz espinaca', precio:3300, unidad:'1 paquete', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p069', cat:'choco', nombre:'Gelatina sin sabor', precio:35000, unidad:'1 kg', emoji:'🥄', desc:'Neutra.' },
+  { id:'p070', cat:'semillas', nombre:'Girasol black', precio:3000, unidad:'1 kg', emoji:'🌻', desc:'Variedad de grano oscuro.' },
+  { id:'p071', cat:'semillas', nombre:'Girasol pelado extra', precio:6000, unidad:'1 kg', emoji:'🌻', desc:'Crudo, sin sal.' },
+  { id:'p072', cat:'cereales', nombre:'Granix almohaditas de avellana', precio:15000, unidad:'1 kg', emoji:'🌰', desc:'Rellenos de avellana.' },
+  { id:'p073', cat:'cereales', nombre:'Granix almohaditasde avena', precio:15000, unidad:'1 kg', emoji:'🥣', desc:'Rellenos de avena.' },
+  { id:'p074', cat:'cereales', nombre:'Granix almohaditasde frutilla', precio:15000, unidad:'1 kg', emoji:'🍓', desc:'Rellenos.' },
+  { id:'p075', cat:'cereales', nombre:'Granix aritos con miel', precio:10000, unidad:'1 kg', emoji:'🍯', desc:'Con miel.' },
+  { id:'p076', cat:'cereales', nombre:'Granix aritos frutales', precio:10000, unidad:'1 kg', emoji:'🍩', desc:'Cereal de colores.' },
+  { id:'p077', cat:'harinas', nombre:'Harina de almendras con piel', precio:39000, unidad:'1 kg', emoji:'🌰', desc:'Sin TACC, baja en carbohidratos.' },
+  { id:'p078', cat:'harinas', nombre:'Harina de arroz blanca', precio:1900, unidad:'1 kg', emoji:'🌾', desc:'Apta para celíacos.' },
+  { id:'p079', cat:'harinas', nombre:'Harina de avena', precio:2900, unidad:'1 kg', emoji:'🌾', desc:'Molida fina.' },
+  { id:'p080', cat:'harinas', nombre:'Harina de coco', precio:9000, unidad:'1 kg', emoji:'', desc:'' },
+  { id:'p081', cat:'harinas', nombre:'Harina de maíz blanco', precio:3900, unidad:'1 kg', emoji:'🌽', desc:'Para polenta y panificados.' },
+  { id:'p082', cat:'harinas', nombre:'Harina integral', precio:1900, unidad:'1 kg', emoji:'', desc:'' },
+  { id:'p083', cat:'harinas', nombre:'Harina paraguaya', precio:3000, unidad:'1 kg', emoji:'🌽', desc:'Para chipá y sopa paraguaya.' },
+  { id:'p084', cat:'yuyos', nombre:'Hibiscus (flor de Jamaica)', precio:25000, unidad:'1 kg', emoji:'🌺', desc:'Para infusión fría o caliente.' },
+  { id:'p085', cat:'secos', nombre:'Higos turcos (Esmirna)', precio:46000, unidad:'1 kg', emoji:'🟤', desc:'Secos, de primera calidad.' },
+  { id:'p086', cat:'especias', nombre:'Hinojo en grano', precio:10000, unidad:'1 kg', emoji:'🌰', desc:'Digestivo.' },
+  { id:'p087', cat:'despensa', nombre:'Hongos de pino', precio:54000, unidad:'1 kg', emoji:'🍄', desc:'Deshidratados.' },
+  { id:'p088', cat:'especias', nombre:'Jengibre molido', precio:16000, unidad:'1 kg', emoji:'🫚', desc:'Seco, en polvo.' },
+  { id:'p089', cat:'bebidas', nombre:'Jugo natural Limón menta jengibre', precio:2500, unidad:'1 u', emoji:'', desc:'Limón menta jengibre' },
+  { id:'p090', cat:'bebidas', nombre:'Jugo natural Naranja ananá', precio:2500, unidad:'1 u', emoji:'', desc:'Estancia los naranjos' },
+  { id:'p091', cat:'bebidas', nombre:'Jugo natural Naranja durazno', precio:2500, unidad:'1 u', emoji:'', desc:'Limón menta jengibre' },
+  { id:'p092', cat:'bebidas', nombre:'Jugo natural Naranja maracuya', precio:2500, unidad:'1 u', emoji:'', desc:'Estancia los naranjos' },
+  { id:'p093', cat:'bebidas', nombre:'Jugo natural paranja', precio:2500, unidad:'1 u', emoji:'', desc:'Estancia los naranjos' },
+  { id:'p094', cat:'bebidas', nombre:'Jugo natural pomelo', precio:2500, unidad:'1 u', emoji:'', desc:'Estancia los naranjos' },
+  { id:'p095', cat:'choco', nombre:'Leche de coco en polvo', precio:36000, unidad:'1 kg', emoji:'🥥', desc:'Se disuelve en agua.' },
+  { id:'p096', cat:'legumbres', nombre:'Lenteja turca', precio:4900, unidad:'1 kg', emoji:'🟠', desc:'Se deshace: ideal para sopas.' },
+  { id:'p097', cat:'legumbres', nombre:'Lentejas nacionales', precio:5000, unidad:'1 kg', emoji:'🫘', desc:'No necesitan remojo previo.' },
+  { id:'p098', cat:'especias', nombre:'Levadura de cerveza', precio:11000, unidad:'1 kg', emoji:'🍺', desc:'En escamas.' },
+  { id:'p099', cat:'semillas', nombre:'Lino en semillas', precio:5000, unidad:'1 kg', emoji:'🟫', desc:'Para moler en el momento.' },
+  { id:'p100', cat:'barras', nombre:'Lulemuu oblea rellena de limón', precio:1000, unidad:'1 u', emoji:'🍋', desc:'Limu.' },
+  { id:'p101', cat:'cereales', nombre:'Maíz pisingallo', precio:1800, unidad:'1 kg', emoji:'🍿', desc:'Para hacer pochoclo en casa.' },
+  { id:'p102', cat:'choco', nombre:'Maní con chocolate semiamargo', precio:20000, unidad:'1 kg', emoji:'🥜', desc:'Argenfrut.' },
+  { id:'p103', cat:'secos', nombre:'Maní garrapiñada', precio:8000, unidad:'1 kg', emoji:'🥜', desc:'Clásico, con azúcar caramelizada.' },
+  { id:'p104', cat:'secos', nombre:'Maní repelado tostado sin sal', precio:5000, unidad:'1 kg', emoji:'🥜', desc:'Tostado natural.' },
+  { id:'p105', cat:'yuyos', nombre:'Manzanilla egipcia', precio:65000, unidad:'1 kg', emoji:'🌼', desc:'Flor entera importada.' },
+  { id:'p106', cat:'yuyos', nombre:'Marcela', precio:17000, unidad:'1 kg', emoji:'🌼', desc:'Digestiva.' },
+  { id:'p107', cat:'suplementos', nombre:'Melena de león en cápsulas', precio:9500, unidad:'1 tableta', emoji:'🍄', desc:'IO Naturale. Tableta de 10 cápsulas.' },
+  { id:'p108', cat:'yuyos', nombre:'Menta en hoja', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Seca.' },
+  { id:'p109', cat:'semillas', nombre:'Mezcla de semillas', precio:10000, unidad:'1 kg', emoji:'🌱', desc:'Chía, lino, sésamo y girasol.' },
+  { id:'p110', cat:'dulces', nombre:'Miel de carpincho', precio:6500, unidad:'300 g', emoji:'🍯', desc:'Miel de carpincho.' },
+  { id:'p111', cat:'secos', nombre:'Mix europeo', precio:39000, unidad:'1 kg', emoji:'✨', desc:'Avellanas, amendras, nuez mariposa y castañas de cajú.' },
+  { id:'p112', cat:'secos', nombre:'Mix sin maní', precio:34000, unidad:'1 kg', emoji:'🍇', desc:'Pistacho, avellanas, nuez mariposa, almendras, pasas rubias y morochas.' },
+  { id:'p113', cat:'yuyos', nombre:'Moringa', precio:35000, unidad:'1 kg', emoji:'🌿', desc:'Hoja molida.' },
+  { id:'p114', cat:'secos', nombre:'Nuez de Brasil pelada (Pará)', precio:60000, unidad:'1 kg', emoji:'🌰', desc:'Alta en selenio.' },
+  { id:'p115', cat:'secos', nombre:'Nuez mariposa extra light', precio:25000, unidad:'1 kg', emoji:'🥜', desc:'Mitades parejas, sin cáscara.' },
+  { id:'p116', cat:'secos', nombre:'Nuez pecán partida', precio:37000, unidad:'1 kg', emoji:'🥜', desc:'Ideal para repostería y ensaladas.' },
+  { id:'p117', cat:'especias', nombre:'Orégano', precio:10000, unidad:'1 kg', emoji:'🌿', desc:'De primera.' },
+  { id:'p118', cat:'yuyos', nombre:'Ortiga', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.' },
+  { id:'p119', cat:'especias', nombre:'Paprika', precio:10000, unidad:'1 kg', emoji:'🌶️', desc:'Suave y aromática.' },
+  { id:'p120', cat:'choco', nombre:'Pasas con chocolate con leche', precio:26000, unidad:'1 kg', emoji:'🍇', desc:'Argenfrut.' },
+  { id:'p121', cat:'secos', nombre:'Pasas morochas jumbo', precio:10000, unidad:'1 kg', emoji:'🍇', desc:'Más dulces que las rubias.' },
+  { id:'p122', cat:'secos', nombre:'Pasas sultaninas rubias', precio:12000, unidad:'1 kg', emoji:'🍇', desc:'Sin semilla, bien tiernas.' },
+  { id:'p123', cat:'especias', nombre:'Pimentón ahumado', precio:22000, unidad:'1 kg', emoji:'🔥', desc:'Sabor ahumado.' },
+  { id:'p124', cat:'especias', nombre:'Pimentón dulce', precio:9000, unidad:'1 kg', emoji:'🔴', desc:'Para guisos y adobos.' },
+  { id:'p125', cat:'especias', nombre:'Pimentón español puro', precio:22000, unidad:'1 kg', emoji:'🔴', desc:'Importado.' },
+  { id:'p126', cat:'especias', nombre:'Pimentón extra', precio:14000, unidad:'1 kg', emoji:'🔴', desc:'Dulce, color intenso.' },
+  { id:'p127', cat:'especias', nombre:'Pimienta blanca molida', precio:65000, unidad:'1 kg', emoji:'⚪', desc:'Más suave que la negra.' },
+  { id:'p128', cat:'especias', nombre:'Pimienta negra molida', precio:35000, unidad:'1 kg', emoji:'⚫', desc:'Molienda fina.' },
+  { id:'p129', cat:'yerba', nombre:'Pindare', precio:5500, unidad:'500 g', emoji:'🧉', desc:'' },
+  { id:'p130', cat:'yuyos', nombre:'Poleo', precio:17000, unidad:'1 kg', emoji:'🍃', desc:'Clásico del mate.' },
+  { id:'p131', cat:'choco', nombre:'Polvo de hornear', precio:8000, unidad:'1 kg', emoji:'🥄', desc:'Leudante en polvo.' },
+  { id:'p132', cat:'legumbres', nombre:'Porotos lupines', precio:4600, unidad:'1 kg', emoji:'🟡', desc:'Ricos en proteína.' },
+  { id:'p133', cat:'legumbres', nombre:'Porotos pallares', precio:7900, unidad:'1 kg', emoji:'⚪', desc:'Grandes y cremosos.' },
+  { id:'p134', cat:'especias', nombre:'Provenzal', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Ajo y perejil.' },
+  { id:'p135', cat:'semillas', nombre:'Psyllium (zaragatona)', precio:36000, unidad:'1 kg', emoji:'🌱', desc:'Fibra soluble.' },
+  { id:'p136', cat:'choco', nombre:'Rocklets', precio:25000, unidad:'1 kg', emoji:'🔴', desc:'Clásicos.' },
+  { id:'p137', cat:'choco', nombre:'Rocklets mini', precio:25000, unidad:'1 kg', emoji:'🔴', desc:'Argenfrut.' },
+  { id:'p138', cat:'yuyos', nombre:'Rompepiedras', precio:26000, unidad:'1 kg', emoji:'🌿', desc:'Tradicional para riñones.' },
+  { id:'p139', cat:'especias', nombre:'Sal del Himalaya', precio:3000, unidad:'1 kg', emoji:'🧂', desc:'Rosada, molida.' },
+  { id:'p140', cat:'especias', nombre:'Sal marina fina', precio:2500, unidad:'500 g', emoji:'🧂', desc:'Imperio Natural.' },
+  { id:'p141', cat:'semillas', nombre:'Semillas de zapallo crudas', precio:24000, unidad:'1 kg', emoji:'🎃', desc:'Peladas, sin sal.' },
+  { id:'p142', cat:'cereales', nombre:'Sémola candeal', precio:2000, unidad:'1 kg', emoji:'🌾', desc:'Para pastas caseras y ñoquis.' },
+  { id:'p143', cat:'yuyos', nombre:'Sen hojas', precio:10000, unidad:'1 kg', emoji:'🌿', desc:'' },
+  { id:'p144', cat:'semillas', nombre:'Sésamo integral', precio:5000, unidad:'1 kg', emoji:'🌾', desc:'Con cáscara.' },
+  { id:'p145', cat:'harinas', nombre:'Salvado de trigo fino', precio:1200, unidad:'1 kg', emoji:'', desc:'' },
+  { id:'p146', cat:'galletitas', nombre:'Smams budín de vainilla', precio:7000, unidad:'250 g', emoji:'🍰', desc:'Sin TACC.' },
+  { id:'p147', cat:'galletitas', nombre:'Smams pepas con membrillo', precio:3200, unidad:'150 g', emoji:'🍪', desc:'Sin TACC.' },
+  { id:'p148', cat:'legumbres', nombre:'Sopa juliana diet', precio:20000, unidad:'1 kg', emoji:'🥕', desc:'Mix de verduras deshidratadas.' },
+  { id:'p149', cat:'dulces', nombre:'Stevia líquida Jual', precio:4000, unidad:'125 cc', emoji:'💧', desc:'Sin calorías.' },
+  { id:'p150', cat:'legumbres', nombre:'Texturizado de soja fino', precio:3600, unidad:'1 kg', emoji:'🟤', desc:'Para milanesas y rellenos.' },
+  { id:'p151', cat:'legumbres', nombre:'Texturizado de soja grueso', precio:3600, unidad:'1 kg', emoji:'🟤', desc:'Para guisos y salsas.' },
+  { id:'p152', cat:'yuyos', nombre:'Tomillo', precio:16000, unidad:'1 kg', emoji:'🌿', desc:'Para infusión y cocina.' },
+  { id:'p153', cat:'cereales', nombre:'Tutucas', precio:10000, unidad:'1 kg', emoji:'🍯', desc:'Azucaradas, livianas.' },
+  { id:'p154', cat:'despensa', nombre:'Vinagreta de manzana Arytza', precio:6500, unidad:'250 cc', emoji:'🍎', desc:'Sin conservantes.' },
+  { id:'p155', cat:'pastas', nombre:'Wakas fusilli de alubia', precio:5300, unidad:'300 g', emoji:'🍝', desc:'Alto en proteína.' },
+  { id:'p156', cat:'pastas', nombre:'Wakas fusilli de amaranto', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p157', cat:'pastas', nombre:'Wakas fusilli de chía', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p158', cat:'pastas', nombre:'Wakas fusilli de kale', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p159', cat:'pastas', nombre:'Wakas fusilli de maíz', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p160', cat:'pastas', nombre:'Wakas fusilli de quinoa', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p161', cat:'pastas', nombre:'Wakas penne de kale', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p162', cat:'pastas', nombre:'Wakas penne de maíz', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p163', cat:'pastas', nombre:'Wakas penne de quinoa', precio:3300, unidad:'300 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p164', cat:'pastas', nombre:'Wakas risoni de alubia y arroz (espinaca)', precio:5900, unidad:'300 g', emoji:'🍚', desc:'Sin TACC.' },
+  { id:'p165', cat:'pastas', nombre:'Wakas risoni de alubia y arroz (zanahoria)', precio:5900, unidad:'300 g', emoji:'🍚', desc:'Sin TACC.' },
+  { id:'p166', cat:'pastas', nombre:'Wakas spaghetti de maíz', precio:5000, unidad:'400 g', emoji:'🍝', desc:'Sin TACC.' },
+  { id:'p167', cat:'yerba', nombre:'Yerba 9 yuyos burrito', precio:3900, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita.' },
+  { id:'p168', cat:'yerba', nombre:'Yerba 9 yuyos tradicional', precio:3900, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita, doypack.' },
+  { id:'p169', cat:'yuyos', nombre:'Yerba dulce con stevia', precio:40000, unidad:'1 kg', emoji:'🍃', desc:'Endulza naturalmente.' },
+  { id:'p170', cat:'yerba', nombre:'Yerba orgánica fuerte', precio:4900, unidad:'500 g', emoji:'🧉', desc:'Roapipo.' },
+  { id:'p171', cat:'yerba', nombre:'Yerba orgánica suave', precio:4900, unidad:'500 g', emoji:'🧉', desc:'Roapipo.' },
+  { id:'p172', cat:'yerba', nombre:'Yerba orgánica tradicional', precio:4900, unidad:'500 g', emoji:'🧉', desc:'Roapipo.' },
+  { id:'p173', cat:'secos', nombre:'Avellanas', precio:48000, unidad:'1 kg', emoji:'', desc:'13 - 15' },
+  { id:'p174', cat:'despensa', nombre:'Aceite de coco Entrenuts', precio:9500, unidad:'360 ml', emoji:'', desc:'Neutro' },
+  { id:'p175', cat:'despensa', nombre:'Aceite de coco Entrenuts', precio:5500, unidad:'200 ml', emoji:'', desc:'Virgen' },
+  { id:'p176', cat:'despensa', nombre:'Aceite de coco Cosaco', precio:3500, unidad:'200 ml', emoji:'', desc:'Neutro' },
+  { id:'p177', cat:'despensa', nombre:'Aceite de coco Sir Sir', precio:12000, unidad:'300 ml', emoji:'', desc:'Extra virgen' },
+  { id:'p178', cat:'despensa', nombre:'Aceite de oliva Dell isola', precio:22000, unidad:'500 ml', emoji:'', desc:'Extra virgen' },
+  { id:'p179', cat:'despensa', nombre:'Aceite de oliva Pampagourmet', precio:28000, unidad:'500 ml', emoji:'', desc:'Extra virgen organico' },
+  { id:'p180', cat:'despensa', nombre:'Aceite de oregano Bio Nativa', precio:26000, unidad:'100 ml', emoji:'', desc:'' },
+  { id:'p181', cat:'despensa', nombre:'Aceite de sesamo tostado Nutrasem', precio:9800, unidad:'250 ml', emoji:'', desc:'' },
+  { id:'p182', cat:'despensa', nombre:'Aceite de oliva Areco', precio:15000, unidad:'500 ml', emoji:'', desc:'Extra vigen' },
+  { id:'p183', cat:'choco', nombre:'Pins de chocolate semiamargo', precio:16000, unidad:'1 kg', emoji:'🍫', desc:'Alpino. Baño de moldeo en pastillitas.' },
+  { id:'p184', cat:'dulces', nombre:'Arrope de tuna', precio:8500, unidad:'450 ml', emoji:'🍯', desc:'Caseritos de la Villa.' },
+  { id:'p185', cat:'semillas', nombre:'Semillas de amapola', precio:18000, unidad:'1 kg', emoji:'🌱', desc:'Para panes y repostería.' },
+  { id:'p186', cat:'especias', nombre:'Eneldo', precio:24000, unidad:'1 kg', emoji:'🌿', desc:'Hojas secas.' },
+  { id:'p187', cat:'especias', nombre:'Perejil en hojas', precio:12000, unidad:'1 kg', emoji:'🌿', desc:'Deshidratado.' },
+  { id:'p188', cat:'semillas', nombre:'Sésamo blanco', precio:10000, unidad:'1 kg', emoji:'🌱', desc:'Pelado, para panes y ensaladas.' },
+  { id:'p189', cat:'caramelos', nombre:'Caramelos de eucaliptus', precio:200, unidad:'1 u', emoji:'🍬', desc:'Natumentos.' },
+  { id:'p190', cat:'caramelos', nombre:'Caramelos de miel y menta', precio:200, unidad:'1 u', emoji:'🍬', desc:'Natumentos.' },
+  { id:'p191', cat:'caramelos', nombre:'Caramelos de miel y jengibre', precio:200, unidad:'1 u', emoji:'🍬', desc:'Natumentos.' },
+  { id:'p192', cat:'barras', nombre:'ENA Protein Bar frutilla a la crema', precio:2200, unidad:'1 barra', emoji:'🍓', desc:'Barra proteica.' },
+  { id:'p193', cat:'especias', nombre:'Pimienta negra en grano', precio:29000, unidad:'1 kg', emoji:'⚫', desc:'Para moler en el momento.' },
+  { id:'p194', cat:'secos', nombre:'Maní con vaina', precio:8000, unidad:'1 kg', emoji:'🥜', desc:'Tostado, con cáscara.' },
+  { id:'p195', cat:'secos', nombre:'Maní runner crudo', precio:5500, unidad:'1 kg', emoji:'🥜', desc:'Sin tostar, con piel.' },
+  { id:'p196', cat:'secos', nombre:'Maní cervecero crocante', precio:7000, unidad:'1 kg', emoji:'🥜', desc:'Saborizado, ideal para picar.' },
+  { id:'p197', cat:'dulces', nombre:'Azúcar orgánica', precio:4500, unidad:'1 kg', emoji:'🍯', desc:'' },
+  { id:'p198', cat:'dulces', nombre:'Azúcar integral de caña', precio:6000, unidad:'1 kg', emoji:'🍯', desc:'' },
+  { id:'p199', cat:'cereales', nombre:'Burbujas de maíz inflado', precio:10000, unidad:'1 kg', emoji:'🍯', desc:'Azucaradas, livianas.' },
+  { id:'p200', cat:'yuyos', nombre:'Caléndula', precio:34000, unidad:'1 kg', emoji:'🌼', desc:'Flores secas.' },
+  { id:'p201', cat:'yuyos', nombre:'Alcachofa', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Hojas secas para infusión.' },
+  { id:'p202', cat:'especias', nombre:'Chimichurri', precio:12000, unidad:'1 kg', emoji:'🌶️', desc:'Mezcla lista.' },
+  { id:'p203', cat:'yuyos', nombre:'Jazmín flor', precio:90000, unidad:'1 kg', emoji:'🌼', desc:'Para infusiones y té.' },
+  { id:'p204', cat:'yuyos', nombre:'Pétalos de rosa', precio:56000, unidad:'1 kg', emoji:'🌹', desc:'Para infusiones.' },
+  { id:'p205', cat:'especias', nombre:'Pesto', precio:14000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla deshidratada.' },
+  { id:'p206', cat:'yuyos', nombre:'Siempre viva', precio:160000, unidad:'1 kg', emoji:'🌼', desc:'Flores secas.' },
+  { id:'p207', cat:'yuyos', nombre:'Té de burro', precio:30000, unidad:'1 kg', emoji:'🍵', desc:'Hojas secas.' },
+  { id:'p208', cat:'yuyos', nombre:'Ambay', precio:16000, unidad:'1 kg', emoji:'🍃', desc:'Hojas secas.' },
+  { id:'p209', cat:'yerba', nombre:'Yerba 9 yuyos guaraná', precio:3900, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita.' },
+  { id:'p210', cat:'yerba', nombre:'Yerba 9 yuyos jengibre', precio:3900, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita.' },
+  { id:'p211', cat:'yerba', nombre:'Yerba 9 yuyos limón', precio:3900, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita.' },
+  { id:'p212', cat:'yerba', nombre:'Yerba 9 yuyos naranja', precio:3900, unidad:'400 g', emoji:'🧉', desc:'La Yuyerita.' },
+  { id:'p213', cat:'suplementos', nombre:'Ashwagandha Sundance', precio:35000, unidad:'60 cápsulas', emoji:'💊', desc:'Frasco de 60 cápsulas.' },
+  { id:'p214', cat:'suplementos', nombre:'Hongo Reishi en cápsulas', precio:5000, unidad:'1 tableta', emoji:'💊', desc:'IO Naturale. Tableta de 10 cápsulas.' },
+  { id:'p215', cat:'suplementos', nombre:'Omega 3 en cápsulas', precio:10000, unidad:'1 tableta', emoji:'💊', desc:'IO Naturale. Tableta de 10 cápsulas.' },
+  { id:'p216', cat:'barras', nombre:'Alfajor avellana y membrillo con chocolate blanco', precio:1900, unidad:'1 u', emoji:'🍪', desc:'Celienergy. Sin TACC.' },
+  { id:'p217', cat:'barras', nombre:'Alfajor de maní con dulce de leche', precio:1900, unidad:'1 u', emoji:'🍪', desc:'Celienergy. Sin TACC.' },
+  { id:'p218', cat:'choco', nombre:'Cacao amargo puro Dicomere', precio:4900, unidad:'200 g', emoji:'🍫', desc:'Sin TACC.' },
+  { id:'p219', cat:'choco', nombre:'Cacao en polvo alcalino El Cosaco', precio:4000, unidad:'150 g', emoji:'🍫', desc:'100% cacao.' },
+  { id:'p220', cat:'choco', nombre:'Cacao natural', precio:14500, unidad:'1 kg', emoji:'🍫', desc:'Sin alcalinizar.' },
+  { id:'p221', cat:'choco', nombre:'Chocolate 80% Dr Cacao sin azúcar', precio:12000, unidad:'50 g', emoji:'🍫', desc:'Barrita de chocolate 80% cacao.' },
+  { id:'p222', cat:'yerba', nombre:'Yerba aMate con palo', precio:3500, unidad:'500 g', emoji:'🧉', desc:'Tradición en cada ronda.' },
+  { id:'p223', cat:'harinas', nombre:'Harina de centeno', precio:1500, unidad:'1 kg', emoji:'🌾', desc:'Para panes de campo y masa madre.' },
+  { id:'p224', cat:'especias', nombre:'Cardamomo verde entero', precio:140000, unidad:'1 kg', emoji:'🟢', desc:'Calidad AA, muy aromático.' },
+  { id:'p225', cat:'harinas', nombre:'Harina glutinada', precio:1500, unidad:'1 kg', emoji:'🌾', desc:'Con más gluten, para panificados.' },
+  { id:'p226', cat:'yuyos', nombre:'Ginkgo biloba', precio:29000, unidad:'1 kg', emoji:'🍃', desc:'Hoja seca.' },
+  { id:'p227', cat:'yuyos', nombre:'Ruda', precio:17000, unidad:'1 kg', emoji:'🌿', desc:'Planta seca.' },
+  { id:'p228', cat:'yuyos', nombre:'Mezcla circulación sanguínea', precio:22000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla de hierbas Herboeste.' },
+  { id:'p229', cat:'yuyos', nombre:'Mezcla colesterol', precio:22000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla de hierbas Herboeste.' },
+  { id:'p230', cat:'yuyos', nombre:'Mezcla depurativa', precio:22000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla de hierbas Herboeste.' },
+  { id:'p231', cat:'yuyos', nombre:'Mezcla expectorante', precio:22000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla de hierbas Herboeste.' },
+  { id:'p232', cat:'yuyos', nombre:'Mezcla hepática', precio:22000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla de hierbas Herboeste.' },
+  { id:'p233', cat:'yuyos', nombre:'Mezcla próstata', precio:22000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla de hierbas Herboeste.' },
+  { id:'p234', cat:'choco', nombre:'Chocolate cobertura Tronador 71%', precio:40000, unidad:'1 u', emoji:'🍫', desc:'Lodiser, semiamargo 71%.' },
+  { id:'p235', cat:'yerba', nombre:'Barão', precio:4900, unidad:'500 g', emoji:'🧉', desc:'' },
+  { id:'p236', cat:'yerba', nombre:'Baldo', precio:12000, unidad:'1 kg', emoji:'🧉', desc:'' },
+  { id:'p237', cat:'yerba', nombre:'Baldo en lata', precio:19000, unidad:'1 u', emoji:'🧉', desc:'' },
+  { id:'p238', cat:'despensa', nombre:'Albóndigas veganas Green Dragon', precio:4500, unidad:'1 paquete', emoji:'🌱', desc:'Paquete de 10 unidades.' },
+  { id:'p239', cat:'despensa', nombre:'Chorizos veganos Green Dragon', precio:4000, unidad:'1 paquete', emoji:'🌱', desc:'Paquete de 4 unidades.' },
+  { id:'p240', cat:'despensa', nombre:'Matambre a la pizza Green Dragon', precio:5500, unidad:'1 u', emoji:'🍕', desc:'Vegano.' },
+  { id:'p241', cat:'despensa', nombre:'Milanesas napolitanas Green Dragon', precio:5000, unidad:'1 paquete', emoji:'🌱', desc:'Paquete de 2 unidades.' },
+  { id:'p242', cat:'despensa', nombre:'Milanesas veganas Green Dragon', precio:6500, unidad:'1 paquete', emoji:'🌱', desc:'Paquete de 4 unidades.' },
+  { id:'p243', cat:'despensa', nombre:'Mostaza Dijon Arytza', precio:6500, unidad:'360 g', emoji:'🟡', desc:'Estilo Dijon.' },
+  { id:'p244', cat:'bebidas', nombre:'Leche de almendras Protein Pampa Vida', precio:5000, unidad:'1 lt', emoji:'🥛', desc:'Con proteína.' },
+  { id:'p245', cat:'cereales', nombre:'Granix almohaditas de chocolate rellenas de limón', precio:15000, unidad:'1 kg', emoji:'🍋', desc:'Rellenas de limón.' },
+  { id:'p246', cat:'barras', nombre:'Entrenuts barra proteica chocolate y maní', precio:2200, unidad:'1 barra', emoji:'🥜', desc:'Con proteína.' },
+  { id:'p247', cat:'barras', nombre:'Entrenuts barra proteica de frutilla', precio:2200, unidad:'1 barra', emoji:'🍓', desc:'Con proteína.' },
+  { id:'p248', cat:'barras', nombre:'Integra barrita girasol y arándano', precio:1500, unidad:'1 u', emoji:'🌻', desc:'41 g.' },
+  { id:'p249', cat:'barras', nombre:'Integra barrita arándanos y semillas', precio:1500, unidad:'1 u', emoji:'🫐', desc:'38 g. Sin TACC.' },
+  { id:'p250', cat:'barras', nombre:'Integra barrita chocolate y semillas', precio:1500, unidad:'1 u', emoji:'🍫', desc:'38 g. Sin TACC.' },
+  { id:'p251', cat:'barras', nombre:'Integra barrita banana y nuez', precio:1500, unidad:'1 u', emoji:'🍌', desc:'41 g.' },
+  { id:'p252', cat:'barras', nombre:'Integra barrita proteica maní y chocolate', precio:2000, unidad:'1 u', emoji:'🥜', desc:'45 g. Con proteína.' },
+  { id:'p253', cat:'barras', nombre:'Integra barrita proteica de banana', precio:2000, unidad:'1 u', emoji:'🍌', desc:'43 g. Con proteína.' },
+  { id:'p254', cat:'barras', nombre:'Integra barrita chocolate con avellanas', precio:2000, unidad:'1 u', emoji:'🍫', desc:'41 g.' },
+  { id:'p255', cat:'barras', nombre:'Integra barrita chocolate, banana y dulce de leche', precio:2000, unidad:'1 u', emoji:'🍫', desc:'41 g.' },
+  { id:'p256', cat:'barras', nombre:'Integra barrita chocolate, coco y dulce de leche', precio:2000, unidad:'1 u', emoji:'🥥', desc:'41 g.' },
+  { id:'p257', cat:'barras', nombre:'Integra barrita doble chocolate', precio:2000, unidad:'1 u', emoji:'🍫', desc:'41 g.' },
+  { id:'p258', cat:'choco', nombre:'Avellanas con chocolate con leche', precio:44000, unidad:'1 kg', emoji:'🌰', desc:'Argenfrut.', nuevo:true },
+  { id:'p259', cat:'choco', nombre:'Bananitas de cereal con chocolate con leche', precio:47000, unidad:'1 kg', emoji:'🍌', desc:'Argenfrut.', nuevo:true },
+  { id:'p260', cat:'choco', nombre:'Cacao en granos', precio:45000, unidad:'1 kg', emoji:'🍫', desc:'Grano de cacao entero.', nuevo:true },
+  { id:'p261', cat:'especias', nombre:'Comino molido', precio:10000, unidad:'1 kg', emoji:'🟤', desc:'Molido fino.', nuevo:true },
+  { id:'p262', cat:'especias', nombre:'Condimento para pescado', precio:12000, unidad:'1 kg', emoji:'🐟', desc:'Mezcla lista.', nuevo:true },
+  { id:'p263', cat:'yuyos', nombre:'Mezcla diabetes', precio:20000, unidad:'1 kg', emoji:'🌿', desc:'Mezcla de hierbas Herboeste.', nuevo:true },
+  { id:'p264', cat:'yuyos', nombre:'Malva', precio:15000, unidad:'1 kg', emoji:'🌿', desc:'Hoja seca.', nuevo:true },
+  { id:'p265', cat:'yuyos', nombre:'Té matcha', precio:55000, unidad:'1 kg', emoji:'🍵', desc:'Té verde japonés en polvo.', nuevo:true },
+  { id:'p266', cat:'cereales', nombre:'Granola energética', precio:14000, unidad:'1 kg', emoji:'🥣', desc:'Con frutos secos y miel.', nuevo:true },
+  { id:'p267', cat:'cereales', nombre:'Granola light con fibra', precio:14000, unidad:'1 kg', emoji:'🥣', desc:'Reducida en azúcar, con fibra.', nuevo:true },
+  { id:'p268', cat:'cereales', nombre:'Granola sin endulzar Orann', precio:14000, unidad:'1 kg', emoji:'🥣', desc:'Sin azúcar agregada.', nuevo:true },
+  { id:'p269', cat:'cereales', nombre:'Granix almohaditas dos salvados', precio:15000, unidad:'1 kg', emoji:'🥣', desc:'Avena y trigo.', nuevo:true },
+  { id:'p270', cat:'cereales', nombre:'Granix almohaditas rellenas de limón', precio:15000, unidad:'1 kg', emoji:'🍋', desc:'Rellenas de limón.', nuevo:true },
+  { id:'p271', cat:'cereales', nombre:'Granix almohaditas rellenas de manzana y canela', precio:15000, unidad:'1 kg', emoji:'🍎', desc:'Rellenas de manzana con canela.', nuevo:true },
+  { id:'p272', cat:'cereales', nombre:'Quinoa pop Yin Yang', precio:10000, unidad:'1 kg', emoji:'🥣', desc:'Quinoa inflada.', nuevo:true },
+  { id:'p273', cat:'suplementos', nombre:'Maca negra', precio:14000, unidad:'1 kg', emoji:'🟤', desc:'En polvo.', nuevo:true },
+  { id:'p274', cat:'suplementos', nombre:'Maca en polvo', precio:10000, unidad:'1 kg', emoji:'🟡', desc:'Energizante natural.', nuevo:true },
+  { id:'p275', cat:'suplementos', nombre:'ENA creatina micronizada neutra', precio:35000, unidad:'300 g', emoji:'💪', desc:'Sabor neutro.', nuevo:true },
+  { id:'p276', cat:'suplementos', nombre:'ENA Whey Protein double rich chocolate', precio:49000, unidad:'453 g', emoji:'💪', desc:'True Made, isolate + concentrate.', nuevo:true },
+  { id:'p277', cat:'suplementos', nombre:'ENA Whey Protein cookies & cream', precio:49000, unidad:'453 g', emoji:'💪', desc:'True Made, isolate + concentrate.', nuevo:true },
+  { id:'p278', cat:'suplementos', nombre:'ENA Whey Protein frutillas a la crema', precio:49000, unidad:'453 g', emoji:'💪', desc:'True Made, isolate + concentrate.', nuevo:true },
+  { id:'p279', cat:'barras', nombre:'Barrita Crudda coco y chocolate', precio:2200, unidad:'1 u', emoji:'🥥', desc:'Con proteína de arveja.', nuevo:true },
+  { id:'p280', cat:'barras', nombre:'Barrita Crudda banana toffee', precio:2200, unidad:'1 u', emoji:'🍌', desc:'Con proteína de arveja.', nuevo:true },
+  { id:'p281', cat:'galletitas', nombre:'Chiqui Diet galletitas de frutilla', precio:2200, unidad:'190 g', emoji:'🍓', desc:'Dietética Integral.', nuevo:true },
+  { id:'p282', cat:'galletitas', nombre:'Chiqui Diet galletitas de manzana', precio:2200, unidad:'190 g', emoji:'🍎', desc:'Dietética Integral.', nuevo:true },
+  { id:'p283', cat:'galletitas', nombre:'Chiqui Diet galletitas de naranja', precio:2200, unidad:'190 g', emoji:'🍊', desc:'Dietética Integral.', nuevo:true },
+  { id:'p284', cat:'galletitas', nombre:'Diabest galletitas de algarroba', precio:2200, unidad:'200 g', emoji:'🍪', desc:'Integralia. Sin azúcar agregada.', nuevo:true },
+  { id:'p285', cat:'galletitas', nombre:'Diabest galletitas de cacao', precio:2200, unidad:'200 g', emoji:'🍪', desc:'Integralia. Sin azúcar agregada.', nuevo:true },
+  { id:'p286', cat:'galletitas', nombre:'Diabest galletitas de coco', precio:2200, unidad:'200 g', emoji:'🍪', desc:'Integralia. Sin azúcar agregada.', nuevo:true },
+  { id:'p287', cat:'galletitas', nombre:'Diabest galletitas de limón', precio:2200, unidad:'200 g', emoji:'🍪', desc:'Integralia. Sin azúcar agregada.', nuevo:true },
+  { id:'p288', cat:'despensa', nombre:'Aceite de coco Entrenuts', precio:5500, unidad:'200 ml', emoji:'🥥', desc:'Neutro', nuevo:true },
+  { id:'p289', cat:'despensa', nombre:'Aceite de coco Entrenuts', precio:15000, unidad:'360 ml', emoji:'🥥', desc:'Virgen', nuevo:true },
+  { id:'p290', cat:'despensa', nombre:'Salsa barbacoa Arytza', precio:6500, unidad:'370 g', emoji:'🍖', desc:'Sin conservantes.', nuevo:true },
+  { id:'p291', cat:'despensa', nombre:'Ketchup ahumado Arytza', precio:7000, unidad:'400 g', emoji:'🍅', desc:'Sin conservantes.', nuevo:true },
+  { id:'p292', cat:'despensa', nombre:'Mayonesa ahumada Arytza', precio:7000, unidad:'340 g', emoji:'🥚', desc:'Sin conservantes.', nuevo:true },
+  { id:'p293', cat:'despensa', nombre:'Mayonesa clásica Arytza', precio:6500, unidad:'340 g', emoji:'🥚', desc:'Sin conservantes.', nuevo:true },
+  { id:'p294', cat:'despensa', nombre:'Mayonesa con ajo Arytza', precio:6500, unidad:'340 g', emoji:'🧄', desc:'Sin conservantes.', nuevo:true },
+  { id:'p295', cat:'despensa', nombre:'Mostaza ahumada Arytza', precio:6500, unidad:'360 g', emoji:'🟡', desc:'Sin conservantes.', nuevo:true },
+  { id:'p296', cat:'despensa', nombre:'Mostaza a la miel Arytza', precio:6500, unidad:'360 g', emoji:'🍯', desc:'Sin conservantes.', nuevo:true },
+  { id:'p297', cat:'despensa', nombre:'Mostaza alemana Arytza', precio:6000, unidad:'360 g', emoji:'🟡', desc:'Sin conservantes.', nuevo:true },
+  { id:'p298', cat:'despensa', nombre:'Mostaza clásica Arytza', precio:6000, unidad:'360 g', emoji:'🟡', desc:'Sin conservantes.', nuevo:true },
+  { id:'p299', cat:'despensa', nombre:'Salsa alioli Arytza', precio:6000, unidad:'340 g', emoji:'🧄', desc:'Sin conservantes.', nuevo:true },
+  { id:'p300', cat:'despensa', nombre:'Salsa Caesar Arytza', precio:6000, unidad:'340 g', emoji:'🥗', desc:'Sin conservantes.', nuevo:true },
+  { id:'p301', cat:'harinas', nombre:'Harina de almendras sin piel', precio:45000, unidad:'1 kg', emoji:'🌰', desc:'Almendra pelada. Sin TACC, baja en carbohidratos.', nuevo:true }
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -955,6 +1045,8 @@ const FOTOS = {
   "granix aritos con miel": 'img/productos/granix-aritos-con-miel.jpg',
   "granix aritos frutales": 'img/productos/granix-aritos-frutales.jpg',
   "harina de almendras": 'img/productos/harina-de-almendras.jpg',
+  "harina de almendras con piel": 'img/productos/harina-de-almendras.jpg',
+  "harina de almendras sin piel": 'img/productos/harina-de-almendras.jpg',
   "harina de arroz blanca": 'img/productos/harina-de-arroz-blanca.jpg',
   "harina de avena": 'img/productos/harina-de-avena.jpg',
   "harina de coco": 'img/productos/harina-de-coco.jpg',
@@ -1109,6 +1201,84 @@ const FOTOS = {
   "barrita crudda arandanos y nuez": 'img/productos/barritas-crudda-arandanos-y-nuez.jpg',
   "barritas (cruddas) avellana y chocolate.": 'img/productos/barritas-crudda-avellana-y-chocolate.jpg',
   "barritas (cruddas) brownie.": 'img/productos/barritas-crudda-brownie.jpg',
+  "anis estrellado": 'img/productos/anis-estrellado.jpg',
+  "arroz carnaroli (risotto)": 'img/productos/arroz-carnaroli-risotto.jpg',
+  "arroz doble carolina": 'img/productos/arroz-doble-carolina.jpg',
+  "arroz doble fortuna": 'img/productos/arroz-doble-fortuna.jpg',
+  "azucar mascabo": 'img/productos/azucar-mascabo.jpg',
+  "azucar mascabo integral": 'img/productos/azucar-mascabo-integral.jpg',
+  "burrito": 'img/productos/burrito.jpg',
+  "congorosa": 'img/productos/congorosa.jpg',
+  "doradilla": 'img/productos/doradilla.jpg',
+  "fenogreco": 'img/productos/fenogreco.jpg',
+  "hinojo en grano": 'img/productos/hinojo-en-grano.jpg',
+  "marcela": 'img/productos/marcela.jpg',
+  "pimenton dulce": 'img/productos/pimenton-dulce.jpg',
+  "sal marina fina": 'img/productos/sal-marina-fina.jpg',
+  "sesamo integral": 'img/productos/sesamo-integral.jpg',
+  "mani cervecero crocante": 'img/productos/mani-cervecero-crocante.jpg',
+  "burbujas de maiz inflado": 'img/productos/burbujas-de-maiz-inflado.jpg',
+  "petalos de rosa": 'img/productos/petalos-de-rosa.jpg',
+  "pesto": 'img/productos/pesto.jpg',
+  "cacao natural": 'img/productos/cacao-natural.jpg',
+  "harina de centeno": 'img/productos/harina-de-centeno.jpg',
+  "cardamomo verde entero": 'img/productos/cardamomo-verde-entero.jpg',
+  "harina glutinada": 'img/productos/harina-glutinada.jpg',
+  "ginkgo biloba": 'img/productos/ginkgo-biloba.jpg',
+  "ruda": 'img/productos/ruda.jpg',
+  "cacao en granos": 'img/productos/cacao-en-granos.jpg',
+  "condimento para pescado": 'img/productos/condimento-para-pescado.jpg',
+  "malva": 'img/productos/malva.jpg',
+  "te matcha": 'img/productos/te-matcha.jpg',
+  "granola energetica": 'img/productos/granola.jpg',
+  "granola light con fibra": 'img/productos/granola.jpg',
+  "granola sin endulzar orann": 'img/productos/granola.jpg',
+  "maca negra": 'img/productos/maca.jpg',
+  "maca en polvo": 'img/productos/maca.jpg',
+  "rocklets": 'img/productos/rocklets.jpg',
+  "rocklets mini": 'img/productos/rocklets.jpg',
+  "mayonesa ahumada arytza": 'img/productos/mayonesa-ahumada-arytza.jpg',
+  "mayonesa clasica arytza": 'img/productos/mayonesa-clasica-arytza.jpg',
+  "mayonesa con ajo arytza": 'img/productos/mayonesa-con-ajo-arytza.jpg',
+  "salsa alioli arytza": 'img/productos/salsa-alioli-arytza.jpg',
+  "salsa barbacoa arytza": 'img/productos/salsa-barbacoa-arytza.jpg',
+  "salsa caesar arytza": 'img/productos/salsa-caesar-arytza.jpg',
+  "mostaza alemana arytza": 'img/productos/mostaza-alemana-arytza.jpg',
+  "mostaza clasica arytza": 'img/productos/mostaza-clasica-arytza.jpg',
+  "mostaza dijon arytza": 'img/productos/mostaza-dijon-arytza.jpg',
+  "barrita crudda banana toffee": 'img/productos/barrita-crudda-banana-toffee.jpg',
+  "barrita crudda coco y chocolate": 'img/productos/barrita-crudda-coco-y-chocolate.jpg',
+  "ena creatina micronizada neutra": 'img/productos/ena-creatina-micronizada-neutra.jpg',
+  "ena whey protein double rich chocolate": 'img/productos/ena-whey-protein.jpg',
+  "ena whey protein cookies & cream": 'img/productos/ena-whey-protein.jpg',
+  "ena whey protein frutillas a la crema": 'img/productos/ena-whey-protein.jpg',
+  "integra barrita chocolate y semillas": 'img/productos/integra-barrita-chocolate-y-semillas.jpg',
+  "integra barrita arandanos y semillas": 'img/productos/integra-barrita-arandanos-y-semillas.jpg',
+  "integra barrita doble chocolate": 'img/productos/integra-barrita-doble-chocolate.jpg',
+  "integra barrita chocolate, banana y dulce de leche": 'img/productos/integra-barrita-chocolate-banana-y-dulce-de-leche.jpg',
+  "integra barrita chocolate, coco y dulce de leche": 'img/productos/integra-barrita-chocolate-coco-y-dulce-de-leche.jpg',
+  "integra barrita chocolate con avellanas": 'img/productos/integra-barrita-chocolate-con-avellanas.jpg',
+  "integra barrita proteica de banana": 'img/productos/integra-barrita-proteica-de-banana.jpg',
+  "leche de almendras protein pampa vida": 'img/productos/leche-de-almendras-protein-pampa-vida.jpg',
+  "entrenuts barra proteica chocolate y mani": 'img/productos/entrenuts-barra-proteica-chocolate-y-mani.jpg',
+  "ketchup ahumado arytza": 'img/productos/ketchup-ahumado-arytza.jpg',
+  "mostaza ahumada arytza": 'img/productos/mostaza-ahumada-arytza.jpg',
+  "mostaza a la miel arytza": 'img/productos/mostaza-a-la-miel-arytza.jpg',
+  "chiqui diet galletitas de frutilla": 'img/productos/chiqui-diet-galletitas-de-frutilla.jpg',
+  "chiqui diet galletitas de manzana": 'img/productos/chiqui-diet-galletitas-de-manzana.jpg',
+  "chiqui diet galletitas de naranja": 'img/productos/chiqui-diet-galletitas-de-naranja.jpg',
+  "diabest galletitas de algarroba": 'img/productos/diabest-galletitas-de-algarroba.jpg',
+  "diabest galletitas de cacao": 'img/productos/diabest-galletitas-de-cacao.jpg',
+  "diabest galletitas de coco": 'img/productos/diabest-galletitas-de-coco.jpg',
+  "diabest galletitas de limon": 'img/productos/diabest-galletitas-de-limon.jpg',
+  "granix almohaditas dos salvados": 'img/productos/granix-almohaditas-dos-salvados.jpg',
+  "granix almohaditas rellenas de limon": 'img/productos/granix-almohaditas-rellenas-de-limon.jpg',
+  "granix almohaditas rellenas de manzana y canela": 'img/productos/granix-almohaditas-rellenas-de-manzana-y-canela.jpg',
+  "quinoa pop yin yang": 'img/productos/quinoa-pop-yin-yang.jpg',
+  "avellanas con chocolate con leche": 'img/productos/avellanas-con-chocolate-con-leche.jpg',
+  "bananitas de cereal con chocolate con leche": 'img/productos/bananitas-de-cereal-con-chocolate-con-leche.jpg',
+  "comino molido": 'img/productos/comino-molido.jpg',
+  "granix almohaditas de chocolate rellenas de limon": 'img/productos/granix-almohaditas-rellenas-de-limon.jpg',
 /*FOTOS-FIN*/
 };
 
@@ -1198,26 +1368,119 @@ const FOTOS = {
   /* ── Categorías ── */
   const grillaCat = $('grillaCategorias'), vistaProd = $('vistaProductos');
 
+  /* Cada tarjeta muestra un carrusel con fotos de productos de esa categoría.
+     Las fotos pasan solas, cada tarjeta a su ritmo, y se frenan cuando la
+     tarjeta no está en pantalla. */
+  const FOTOS_POR_CATEGORIA = 6;
+  const catQuieta = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let carruselesCat = [];
+
+  const visibles = 'IntersectionObserver' in window
+    ? new IntersectionObserver(entradas => entradas.forEach(e => { e.target._visible = e.isIntersecting; }))
+    : null;
+
   function pintarCategorias() {
+    carruselesCat.forEach(t => clearInterval(t));
+    carruselesCat = [];
+    if (visibles) visibles.disconnect();
     grillaCat.innerHTML = '';
-    CATEGORIAS.forEach(c => {
-      const cuantos = PRODUCTOS.filter(p => p.cat === c.id).length;
+    CATEGORIAS.forEach((c, n) => {
+      const deLaCat = PRODUCTOS.filter(p => p.cat === c.id);
+      const cuantos = deLaCat.length;
       if (cuantos === 0) return;   // una categoría sin productos no se muestra
+      // Fotos distintas, mezcladas, para que no siempre arranque con la misma.
+      const vistas = new Set();
+      const fotos = deLaCat
+        .map(p => ({ f: fotoDe(p), nombre: p.nombre.trim() }))
+        .filter(x => x.f && !vistas.has(x.f) && vistas.add(x.f))
+        .sort(() => Math.random() - .5).slice(0, FOTOS_POR_CATEGORIA);
+
       const b = document.createElement('button');
       b.className = 'cat-card'; b.type = 'button';
       b.innerHTML =
-        '<div class="cat-txt">' +
-          '<div class="cat-nom">' + c.nombre + '</div>' +
-          '<div class="cat-cant">' + cuantos + (cuantos === 1 ? ' producto' : ' productos') + '</div>' +
+        '<div class="cat-fotos">' +
+          (fotos.length
+            ? fotos.map((x, i) => '<div class="cat-slide' + (i === 0 ? ' activa' : '') + '">' +
+                '<img src="' + x.f + '" alt="" loading="' + (i === 0 ? 'eager' : 'lazy') + '" decoding="async">' +
+                '<span class="cat-prod">' + x.nombre + '</span></div>').join('') +
+              (fotos.length > 1 ? '<div class="cat-puntos">' + fotos.map((f, i) => '<i' + (i === 0 ? ' class="activo"' : '') + '></i>').join('') + '</div>' : '')
+            : '<span class="cat-sin-foto" aria-hidden="true">' + c.emoji + '</span>') +
+          (fotos.length ? '<span class="cat-emoji" aria-hidden="true">' + c.emoji + '</span>' : '') +
         '</div>' +
-        '<div class="cat-ver" aria-hidden="true">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none">' +
-          '<path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<div class="cat-pie">' +
+          '<div class="cat-txt">' +
+            '<div class="cat-nom">' + c.nombre + '</div>' +
+            '<div class="cat-cant">' + cuantos + (cuantos === 1 ? ' producto' : ' productos') + '</div>' +
+          '</div>' +
+          '<div class="cat-ver" aria-hidden="true">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none">' +
+            '<path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '</div>' +
         '</div>';
       b.setAttribute('aria-label', 'Ver los productos de ' + c.nombre);
       b.addEventListener('click', () => abrirCategoria(c.id));
+      // Una foto que no carga se saca del carrusel.
+      b.querySelectorAll('.cat-slide img').forEach(img => img.addEventListener('error', () => {
+        const slide = img.parentElement, i = [...slide.parentElement.querySelectorAll('.cat-slide')].indexOf(slide);
+        const punto = b.querySelectorAll('.cat-puntos i')[i];
+        if (punto) punto.remove();
+        const eraActiva = slide.classList.contains('activa');
+        slide.remove();
+        if (eraActiva) avanzar(b, 0);
+      }));
       grillaCat.appendChild(b);
+
+      if (fotos.length > 1 && !catQuieta) {
+        b._visible = true;
+        if (visibles) visibles.observe(b);
+        // Arranques escalonados: no cambian todas las tarjetas a la vez.
+        setTimeout(() => {
+          carruselesCat.push(setInterval(() => {
+            if (b._visible && !document.hidden) avanzar(b, 1);
+          }, 3200));
+        }, (n % 4) * 700);
+      }
     });
+  }
+
+  function avanzar(card, paso) {
+    const slides = card.querySelectorAll('.cat-slide'), puntos = card.querySelectorAll('.cat-puntos i');
+    if (!slides.length) return;
+    let i = [...slides].findIndex(s => s.classList.contains('activa'));
+    if (i < 0) {   // se borró la que estaba a la vista: mostramos la primera
+      slides[0].classList.remove('sale'); slides[0].classList.add('activa');
+      puntos.forEach((p, k) => p.classList.toggle('activo', k === 0));
+      return;
+    }
+    const sig = (i + paso) % slides.length;
+    const img = slides[sig].querySelector('img');
+    // Si la próxima foto todavía no bajó, la pedimos y esperamos a la vuelta siguiente.
+    if (paso && img && !(img.complete && img.naturalWidth)) { img.loading = 'eager'; return; }
+    if (sig === i) return;
+    // La que sale se va a la izquierda; la que entra viene desde la derecha.
+    // Las que ya salieron vuelven a la derecha sin animación, fuera de la vista.
+    slides.forEach((s, k) => {
+      if (k === i || k === sig) return;
+      if (s.classList.contains('sale')) {
+        s.style.transition = 'none'; s.classList.remove('sale');
+        void s.offsetWidth; s.style.transition = '';
+      }
+    });
+    if (slides[sig].classList.contains('sale')) {
+      slides[sig].style.transition = 'none'; slides[sig].classList.remove('sale');
+      void slides[sig].offsetWidth; slides[sig].style.transition = '';
+    }
+    slides[i].classList.remove('activa'); slides[i].classList.add('sale');
+    slides[sig].classList.add('activa');
+    puntos.forEach((p, k) => p.classList.toggle('activo', k === sig));
+    // Precargamos la que viene después para que el cambio sea limpio.
+    const prox = slides[(sig + 1) % slides.length].querySelector('img');
+    if (prox) prox.loading = 'eager';
+  }
+
+  function fotoDe(p) {
+    return p.foto || FOTOS[normalizar(p.nombre.trim() + ' ' + (p.desc || ''))] ||
+      FOTOS[normalizar(p.nombre.trim() + ' ' + p.unidad)] || FOTOS[normalizar(p.nombre.trim())] || FOTOS[normalizar(p.nombre)];
   }
   pintarCategorias();
 
@@ -1309,7 +1572,7 @@ const FOTOS = {
     const cat = CATEGORIAS.find(c => c.id === p.cat);
     const el = document.createElement('article');
     el.className = 'prod';
-    const foto = p.foto || FOTOS[normalizar(p.nombre.trim() + ' ' + (p.desc || ''))] || FOTOS[normalizar(p.nombre.trim() + ' ' + p.unidad)] || FOTOS[normalizar(p.nombre.trim())] || FOTOS[normalizar(p.nombre)];
+    const foto = fotoDe(p);
     el.innerHTML =
       '<div class="prod-foto' + (foto ? '' : ' sin-foto') + '">' +
         (foto ? '<img src="' + foto + '" alt="" loading="lazy" decoding="async">'
@@ -1352,7 +1615,8 @@ const FOTOS = {
   const nombresNuevos = new Set(NUEVOS.map(normalizar));
 
   function pintarNuevos() {
-    const lista = PRODUCTOS.filter(p => p.nuevo || nombresNuevos.has(normalizar(p.nombre)));
+    // Los últimos que se agregaron a la planilla están más abajo: los mostramos primero.
+    const lista = PRODUCTOS.filter(p => p.nuevo || nombresNuevos.has(normalizar(p.nombre))).reverse();
     $('nuevos').hidden = lista.length === 0;
     $('linkNuevos').hidden = lista.length === 0;
     carru.innerHTML = '';
